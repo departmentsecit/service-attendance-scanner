@@ -1,0 +1,34 @@
+
+// Fonts
+// @import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Bootstrap
+// @import '~bootstrap/scss/bootstrap';
+
+// Variables
+@import 'variables';
+
+
+// my custom style
+@import 'customStyle';
+
+// admin lte
+@import '~admin-lte/dist/css/adminlte.css';
+@import '~admin-lte/plugins/fontawesome-free/css/all.min.css';
+// datatables
+@import '~admin-lte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css';
+@import '~admin-lte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css';
+// daterangepicker
+@import '~admin-lte/plugins/daterangepicker/daterangepicker.css';
+// Select 2
+@import '~admin-lte/plugins/select2/css/select2.min.css';
+@import '~admin-lte/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css';
+// duallistbox
+@import '~admin-lte/plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css';
+
+
+
+.navbar-laravel {
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}

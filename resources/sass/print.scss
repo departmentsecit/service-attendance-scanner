@@ -1,0 +1,40 @@
+// admin lte
+@import '~admin-lte/dist/css/adminlte.css';
+@import '~admin-lte/plugins/fontawesome-free/css/all.min.css';
+
+
+// Variables
+@import 'variables';
+// my custom style
+@import 'customStyle';
+
+
+@media print{
+    body {-webkit-print-color-adjust: exact;}
+    div#print-wrapper{
+        padding: 10px 20px;
+        -webkit-print-color-adjust: exact !important;
+    }
+}
+
+@page{
+    margin: 0;
+}
+
+
+div#page-header-style-1{
+    background: -moz-linear-gradient(90deg, #FAFCFF 0%, #FAFCFF 8%, #58C1FA 99%, #57C1FA 100%); /* ff3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #57C1FA), color-stop(1%, #58C1FA), color-stop(92%, #FAFCFF), color-stop(100%, #FAFCFF)); /* safari4+,chrome */
+    background: -webkit-linear-gradient(90deg, #FAFCFF 0%, #FAFCFF 8%, #58C1FA 99%, #57C1FA 100%); /* safari5.1+,chrome10+ */
+    background: -o-linear-gradient(90deg, #FAFCFF 0%, #FAFCFF 8%, #58C1FA 99%, #57C1FA 100%); /* opera 11.10+ */
+    background: -ms-linear-gradient(90deg, #FAFCFF 0%, #FAFCFF 8%, #58C1FA 99%, #57C1FA 100%); /* ie10+ */
+    background: linear-gradient(0deg, #FAFCFF 0%, #FAFCFF 8%, #58C1FA 99%, #57C1FA 100%); /* w3c */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#57C1FA', endColorstr='#FAFCFF',GradientType=0 ); /* ie6-9 */
+}
+
+.doc-title-style-1{
+    font-family: 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;
+    font-weight: bolder;
+    font-size: 25px; 
+    color: #045cea;
+}

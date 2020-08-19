@@ -1,0 +1,16 @@
+.clickable{
+    cursor: pointer;
+}
+
+.text-placeholder{
+  color: #949596 !important;
+}
+
+.text-black{
+  color: #495057 !important;
+}
+
+// override Select 2 dropdown styling
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  margin-top: -8px !important;
+}
