@@ -254,76 +254,76 @@
                                             </div>
                                             <!-- /.card-header -->
                                             <!-- form start -->
-                                            <form class="form-horizontal">
-                                                <div class="card-body">
+                                            
+                                            <div class="card-body form-horizontal">
 
-                                                    <alert-errors :form="newLiftForm" message="There were some problems with your input."></alert-errors>
+                                                <alert-errors :form="newLiftForm" message="There were some problems with your input."></alert-errors>
 
-                                                    <div class="form-group row">
-                                                        <label for="buildingNumber" class="col-sm-2 col-form-label text-sm-right">Bldg #</label>
-                                                        <div class="col-sm-10">
-                                                            <select class="form-control" :class="{'is-invalid':newLiftForm.errors.has('building')}"  id="buildingNumber" v-model="newLiftForm.building">
-                                                                <option value="" selected disabled>Select building #</option>
-                                                                <option v-for="(building,i) in buildings" :key="i" :value="building.id">{{building.number}}</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group row">
-                                                        <label for="liftNumber" class="col-sm-2 col-form-label text-sm-right">Lift #</label>
-                                                        <div class="col-sm-10">
-                                                            <select class="form-control" :class="{'is-invalid':newLiftForm.errors.has('lift_number')}"  id="liftNumber" v-model="newLiftForm.lift_number">
-                                                                <option value="" selected disabled>Select lift #</option>
-                                                                <option v-for="i in 30" :key="i" :value="i">{{i}}</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group row">
-                                                        <label for="description" class="col-sm-2 col-form-label text-sm-right">Description</label>
-                                                        <div class="col-sm-10">
-                                                            <textarea class="form-control" id="description" rows="3" placeholder="Enter lift description" v-model="newLiftForm.description"></textarea>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group row">
-                                                        <label for="floorCount" class="col-sm-2 col-form-label text-sm-right">Floors</label>
-                                                        <div class="col-sm-10">
-                                                            <select class="form-control" id="floorCount" v-model="newLiftForm.floor_count">
-                                                                <option value="0" selected disabled>Select number of floors</option>
-                                                                <option v-for="i in 50" :key="i" :value="i">{{i}}</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-sm-6 offset-sm-2">
-                                                        <table class="table table-sm">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th style="width: 50px">#</th>
-                                                                    <th>Floor</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr v-for="i in newLiftForm.floor_count" :key="i">
-                                                                    <td>{{i}}.</td>
-                                                                    <td>
-                                                                        <div class="form-group">
-                                                                            <select class="form-control form-control-sm select2" :id="'floor-name-'+i" style="width: 100%;">
-                                                                                <option value="" selected disabled></option>
-                                                                                <option v-for="(floorName, i) in floorNames" :key="i" :value="floorName.id">{{floorName.letter}} - {{floorName.name}}</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
+                                                <div class="form-group row">
+                                                    <label for="buildingNumber" class="col-sm-2 col-form-label text-sm-right">Bldg #</label>
+                                                    <div class="col-sm-10">
+                                                        <select class="form-control" :class="{'is-invalid':newLiftForm.errors.has('building')}"  id="buildingNumber" v-model="newLiftForm.building">
+                                                            <option value="" selected disabled>Select building #</option>
+                                                            <option v-for="(building,i) in buildings" :key="i" :value="building.id">{{building.number}}</option>
+                                                        </select>
                                                     </div>
                                                 </div>
-                                                <!-- /.card-body -->
-                                                <div class="card-footer">
-                                                <button type="submit" class="btn btn-info" @click="addLift()">Save</button>
-                                                <button type="submit" class="btn btn-default float-right" @click="cancelAddLift()">Cancel</button>
+                                                <div class="form-group row">
+                                                    <label for="liftNumber" class="col-sm-2 col-form-label text-sm-right">Lift #</label>
+                                                    <div class="col-sm-10">
+                                                        <select class="form-control" :class="{'is-invalid':newLiftForm.errors.has('lift_number')}"  id="liftNumber" v-model="newLiftForm.lift_number">
+                                                            <option value="" selected disabled>Select lift #</option>
+                                                            <option v-for="i in 30" :key="i" :value="i">{{i}}</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                                <!-- /.card-footer -->
-                                            </form>
+                                                <div class="form-group row">
+                                                    <label for="description" class="col-sm-2 col-form-label text-sm-right">Description</label>
+                                                    <div class="col-sm-10">
+                                                        <textarea class="form-control" id="description" rows="3" placeholder="Enter lift description" v-model="newLiftForm.description"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="floorCount" class="col-sm-2 col-form-label text-sm-right">Floors</label>
+                                                    <div class="col-sm-10">
+                                                        <select class="form-control" id="floorCount" v-model="newLiftForm.floor_count">
+                                                            <option value="0" selected disabled>Select number of floors</option>
+                                                            <option v-for="i in 50" :key="i" :value="i">{{i}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-6 offset-sm-2">
+                                                    <table class="table table-sm">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="width: 50px">#</th>
+                                                                <th>Floor</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="i in newLiftForm.floor_count" :key="i">
+                                                                <td>{{i}}.</td>
+                                                                <td>
+                                                                    <div class="form-group">
+                                                                        <select class="form-control form-control-sm select2" :id="'floor-name-'+i" style="width: 100%;">
+                                                                            <option value="" selected disabled></option>
+                                                                            <option v-for="(floorName, i) in floorNames" :key="i" :value="floorName.id">{{floorName.letter}} - {{floorName.name}}</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <!-- /.card-body -->
+                                            <div class="card-footer">
+                                                <button type="button" class="btn btn-info" @click="addLift()">Save</button>
+                                                <button type="button" class="btn btn-default float-right" @click="cancelAddLift()">Cancel</button>
+                                            </div>
+                                            <!-- /.card-footer -->
+                                            
                                         </div>
                                         <!-- /.card -->
 
@@ -484,10 +484,6 @@ export default {
         // fetch data for dropdown list
         this.getCountries();
 
-        this.getFloorNames();
-        this.getBuildings();
-        this.getLifts();
-
         //Initialize Select2 Elements
         $('.select2').select2();
 
@@ -511,7 +507,7 @@ export default {
     methods:{
         addBuilding(){
             // check if building number populated
-            if (this.newBuildingForm.number) {
+            if (this.newBuildingForm.number && this.newBuildingForm.name) {
                 // check if building already added on the list
                 let result = this.newProjectForm.buildings.find(building => building.number === this.newBuildingForm.number);
                 
@@ -529,7 +525,7 @@ export default {
             }else{
                 Swal.fire(
                     'Error!',
-                    'Please select building number.',
+                    'Please fill out all fields.',
                     'error'
                 );
             }
@@ -677,7 +673,15 @@ export default {
                                 'error'
                             );
                         }
+                    })
+                    .catch((res)=>{
+                        Swal.fire(
+                            'Error!',
+                            'Unable to save lift.',
+                            'error'
+                        );
                     });
+
             } else {
                 Swal.fire(
                     'Error',

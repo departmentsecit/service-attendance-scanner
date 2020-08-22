@@ -721,10 +721,7 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     // fetch data for dropdown list
-    this.getCountries();
-    this.getFloorNames();
-    this.getBuildings();
-    this.getLifts(); //Initialize Select2 Elements
+    this.getCountries(); //Initialize Select2 Elements
 
     $('.select2').select2(); // reset add country modal 
 
@@ -750,7 +747,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       // check if building number populated
-      if (this.newBuildingForm.number) {
+      if (this.newBuildingForm.number && this.newBuildingForm.name) {
         // check if building already added on the list
         var result = this.newProjectForm.buildings.find(function (building) {
           return building.number === _this2.newBuildingForm.number;
@@ -764,7 +761,7 @@ __webpack_require__.r(__webpack_exports__);
           Swal.fire('Error!', 'Building already added', 'error');
         }
       } else {
-        Swal.fire('Error!', 'Please select building number.', 'error');
+        Swal.fire('Error!', 'Please fill out all fields.', 'error');
       }
     },
     removeBuilding: function removeBuilding(index) {
@@ -890,6 +887,8 @@ __webpack_require__.r(__webpack_exports__);
           } else {
             Swal.fire('Error!', 'Unable to save lift.', 'error');
           }
+        })["catch"](function (res) {
+          Swal.fire('Error!', 'Unable to save lift.', 'error');
         });
       } else {
         Swal.fire('Error', 'Please complete filling out the floor names', 'error');
@@ -1125,11 +1124,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       buildings: [],
       lifts: [],
       floors: [],
-      generateQRCodeForm: {
+      generateQRCodeForm: new Form({
         building: "",
         lift: "",
         floors: []
-      }
+      })
     };
   },
   mounted: function mounted() {
@@ -1242,8 +1241,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     generateQRCodeModal: function generateQRCodeModal() {
       // add code here to check if floors parameter is not empty 
-      window.open('/qr-code/generate/print?building=' + this.generateQRCodeForm.building + '&lift=' + this.generateQRCodeForm.lift + '&floors=' + this.generateQRCodeForm.floors, '_blank');
-      $('generate-qr-modal').modal('hide');
+      if (this.generateQRCodeForm.floors.length > 0) {
+        window.open('/qr-code/generate/print?building=' + this.generateQRCodeForm.building + '&lift=' + this.generateQRCodeForm.lift + '&floors=' + this.generateQRCodeForm.floors, '_blank');
+        $('generate-qr-modal').modal('hide');
+      } else {
+        Swal.fire('Error!', 'Please select at least 1 floor.', 'error');
+      }
     }
   }
 });
@@ -2719,451 +2722,438 @@ var render = function() {
                           [
                             _vm._m(10),
                             _vm._v(" "),
-                            _c("form", { staticClass: "form-horizontal" }, [
-                              _c(
-                                "div",
-                                { staticClass: "card-body" },
-                                [
-                                  _c("alert-errors", {
-                                    attrs: {
-                                      form: _vm.newLiftForm,
-                                      message:
-                                        "There were some problems with your input."
-                                    }
-                                  }),
+                            _c(
+                              "div",
+                              { staticClass: "card-body form-horizontal" },
+                              [
+                                _c("alert-errors", {
+                                  attrs: {
+                                    form: _vm.newLiftForm,
+                                    message:
+                                      "There were some problems with your input."
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "form-group row" }, [
+                                  _c(
+                                    "label",
+                                    {
+                                      staticClass:
+                                        "col-sm-2 col-form-label text-sm-right",
+                                      attrs: { for: "buildingNumber" }
+                                    },
+                                    [_vm._v("Bldg #")]
+                                  ),
                                   _vm._v(" "),
-                                  _c("div", { staticClass: "form-group row" }, [
+                                  _c("div", { staticClass: "col-sm-10" }, [
                                     _c(
-                                      "label",
+                                      "select",
                                       {
-                                        staticClass:
-                                          "col-sm-2 col-form-label text-sm-right",
-                                        attrs: { for: "buildingNumber" }
-                                      },
-                                      [_vm._v("Bldg #")]
-                                    ),
-                                    _vm._v(" "),
-                                    _c("div", { staticClass: "col-sm-10" }, [
-                                      _c(
-                                        "select",
-                                        {
-                                          directives: [
-                                            {
-                                              name: "model",
-                                              rawName: "v-model",
-                                              value: _vm.newLiftForm.building,
-                                              expression: "newLiftForm.building"
-                                            }
-                                          ],
-                                          staticClass: "form-control",
-                                          class: {
-                                            "is-invalid": _vm.newLiftForm.errors.has(
-                                              "building"
-                                            )
-                                          },
-                                          attrs: { id: "buildingNumber" },
-                                          on: {
-                                            change: function($event) {
-                                              var $$selectedVal = Array.prototype.filter
-                                                .call(
-                                                  $event.target.options,
-                                                  function(o) {
-                                                    return o.selected
-                                                  }
-                                                )
-                                                .map(function(o) {
-                                                  var val =
-                                                    "_value" in o
-                                                      ? o._value
-                                                      : o.value
-                                                  return val
-                                                })
-                                              _vm.$set(
-                                                _vm.newLiftForm,
-                                                "building",
-                                                $event.target.multiple
-                                                  ? $$selectedVal
-                                                  : $$selectedVal[0]
-                                              )
-                                            }
-                                          }
-                                        },
-                                        [
-                                          _c(
-                                            "option",
-                                            {
-                                              attrs: {
-                                                value: "",
-                                                selected: "",
-                                                disabled: ""
-                                              }
-                                            },
-                                            [_vm._v("Select building #")]
-                                          ),
-                                          _vm._v(" "),
-                                          _vm._l(_vm.buildings, function(
-                                            building,
-                                            i
-                                          ) {
-                                            return _c(
-                                              "option",
-                                              {
-                                                key: i,
-                                                domProps: { value: building.id }
-                                              },
-                                              [_vm._v(_vm._s(building.number))]
-                                            )
-                                          })
-                                        ],
-                                        2
-                                      )
-                                    ])
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("div", { staticClass: "form-group row" }, [
-                                    _c(
-                                      "label",
-                                      {
-                                        staticClass:
-                                          "col-sm-2 col-form-label text-sm-right",
-                                        attrs: { for: "liftNumber" }
-                                      },
-                                      [_vm._v("Lift #")]
-                                    ),
-                                    _vm._v(" "),
-                                    _c("div", { staticClass: "col-sm-10" }, [
-                                      _c(
-                                        "select",
-                                        {
-                                          directives: [
-                                            {
-                                              name: "model",
-                                              rawName: "v-model",
-                                              value:
-                                                _vm.newLiftForm.lift_number,
-                                              expression:
-                                                "newLiftForm.lift_number"
-                                            }
-                                          ],
-                                          staticClass: "form-control",
-                                          class: {
-                                            "is-invalid": _vm.newLiftForm.errors.has(
-                                              "lift_number"
-                                            )
-                                          },
-                                          attrs: { id: "liftNumber" },
-                                          on: {
-                                            change: function($event) {
-                                              var $$selectedVal = Array.prototype.filter
-                                                .call(
-                                                  $event.target.options,
-                                                  function(o) {
-                                                    return o.selected
-                                                  }
-                                                )
-                                                .map(function(o) {
-                                                  var val =
-                                                    "_value" in o
-                                                      ? o._value
-                                                      : o.value
-                                                  return val
-                                                })
-                                              _vm.$set(
-                                                _vm.newLiftForm,
-                                                "lift_number",
-                                                $event.target.multiple
-                                                  ? $$selectedVal
-                                                  : $$selectedVal[0]
-                                              )
-                                            }
-                                          }
-                                        },
-                                        [
-                                          _c(
-                                            "option",
-                                            {
-                                              attrs: {
-                                                value: "",
-                                                selected: "",
-                                                disabled: ""
-                                              }
-                                            },
-                                            [_vm._v("Select lift #")]
-                                          ),
-                                          _vm._v(" "),
-                                          _vm._l(30, function(i) {
-                                            return _c(
-                                              "option",
-                                              {
-                                                key: i,
-                                                domProps: { value: i }
-                                              },
-                                              [_vm._v(_vm._s(i))]
-                                            )
-                                          })
-                                        ],
-                                        2
-                                      )
-                                    ])
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("div", { staticClass: "form-group row" }, [
-                                    _c(
-                                      "label",
-                                      {
-                                        staticClass:
-                                          "col-sm-2 col-form-label text-sm-right",
-                                        attrs: { for: "description" }
-                                      },
-                                      [_vm._v("Description")]
-                                    ),
-                                    _vm._v(" "),
-                                    _c("div", { staticClass: "col-sm-10" }, [
-                                      _c("textarea", {
                                         directives: [
                                           {
                                             name: "model",
                                             rawName: "v-model",
-                                            value: _vm.newLiftForm.description,
-                                            expression:
-                                              "newLiftForm.description"
+                                            value: _vm.newLiftForm.building,
+                                            expression: "newLiftForm.building"
                                           }
                                         ],
                                         staticClass: "form-control",
-                                        attrs: {
-                                          id: "description",
-                                          rows: "3",
-                                          placeholder: "Enter lift description"
+                                        class: {
+                                          "is-invalid": _vm.newLiftForm.errors.has(
+                                            "building"
+                                          )
                                         },
-                                        domProps: {
-                                          value: _vm.newLiftForm.description
-                                        },
+                                        attrs: { id: "buildingNumber" },
                                         on: {
-                                          input: function($event) {
-                                            if ($event.target.composing) {
-                                              return
-                                            }
+                                          change: function($event) {
+                                            var $$selectedVal = Array.prototype.filter
+                                              .call(
+                                                $event.target.options,
+                                                function(o) {
+                                                  return o.selected
+                                                }
+                                              )
+                                              .map(function(o) {
+                                                var val =
+                                                  "_value" in o
+                                                    ? o._value
+                                                    : o.value
+                                                return val
+                                              })
                                             _vm.$set(
                                               _vm.newLiftForm,
-                                              "description",
-                                              $event.target.value
+                                              "building",
+                                              $event.target.multiple
+                                                ? $$selectedVal
+                                                : $$selectedVal[0]
                                             )
                                           }
                                         }
-                                      })
-                                    ])
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("div", { staticClass: "form-group row" }, [
-                                    _c(
-                                      "label",
-                                      {
-                                        staticClass:
-                                          "col-sm-2 col-form-label text-sm-right",
-                                        attrs: { for: "floorCount" }
                                       },
-                                      [_vm._v("Floors")]
-                                    ),
-                                    _vm._v(" "),
-                                    _c("div", { staticClass: "col-sm-10" }, [
-                                      _c(
-                                        "select",
-                                        {
-                                          directives: [
-                                            {
-                                              name: "model",
-                                              rawName: "v-model",
-                                              value:
-                                                _vm.newLiftForm.floor_count,
-                                              expression:
-                                                "newLiftForm.floor_count"
+                                      [
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "",
+                                              selected: "",
+                                              disabled: ""
                                             }
-                                          ],
-                                          staticClass: "form-control",
-                                          attrs: { id: "floorCount" },
-                                          on: {
-                                            change: function($event) {
-                                              var $$selectedVal = Array.prototype.filter
-                                                .call(
-                                                  $event.target.options,
-                                                  function(o) {
-                                                    return o.selected
-                                                  }
-                                                )
-                                                .map(function(o) {
-                                                  var val =
-                                                    "_value" in o
-                                                      ? o._value
-                                                      : o.value
-                                                  return val
-                                                })
-                                              _vm.$set(
-                                                _vm.newLiftForm,
-                                                "floor_count",
-                                                $event.target.multiple
-                                                  ? $$selectedVal
-                                                  : $$selectedVal[0]
-                                              )
-                                            }
-                                          }
-                                        },
-                                        [
-                                          _c(
+                                          },
+                                          [_vm._v("Select building #")]
+                                        ),
+                                        _vm._v(" "),
+                                        _vm._l(_vm.buildings, function(
+                                          building,
+                                          i
+                                        ) {
+                                          return _c(
                                             "option",
                                             {
-                                              attrs: {
-                                                value: "0",
-                                                selected: "",
-                                                disabled: ""
-                                              }
+                                              key: i,
+                                              domProps: { value: building.id }
                                             },
-                                            [_vm._v("Select number of floors")]
-                                          ),
-                                          _vm._v(" "),
-                                          _vm._l(50, function(i) {
-                                            return _c(
-                                              "option",
-                                              {
-                                                key: i,
-                                                domProps: { value: i }
-                                              },
-                                              [_vm._v(_vm._s(i))]
-                                            )
-                                          })
-                                        ],
-                                        2
-                                      )
-                                    ])
-                                  ]),
-                                  _vm._v(" "),
-                                  _c(
-                                    "div",
-                                    { staticClass: "col-sm-6 offset-sm-2" },
-                                    [
-                                      _c(
-                                        "table",
-                                        { staticClass: "table table-sm" },
-                                        [
-                                          _vm._m(11),
-                                          _vm._v(" "),
-                                          _c(
-                                            "tbody",
-                                            _vm._l(
-                                              _vm.newLiftForm.floor_count,
-                                              function(i) {
-                                                return _c("tr", { key: i }, [
-                                                  _c("td", [
-                                                    _vm._v(_vm._s(i) + ".")
-                                                  ]),
-                                                  _vm._v(" "),
-                                                  _c("td", [
-                                                    _c(
-                                                      "div",
-                                                      {
-                                                        staticClass:
-                                                          "form-group"
-                                                      },
-                                                      [
-                                                        _c(
-                                                          "select",
-                                                          {
-                                                            staticClass:
-                                                              "form-control form-control-sm select2",
-                                                            staticStyle: {
-                                                              width: "100%"
-                                                            },
-                                                            attrs: {
-                                                              id:
-                                                                "floor-name-" +
-                                                                i
-                                                            }
-                                                          },
-                                                          [
-                                                            _c("option", {
-                                                              attrs: {
-                                                                value: "",
-                                                                selected: "",
-                                                                disabled: ""
-                                                              }
-                                                            }),
-                                                            _vm._v(" "),
-                                                            _vm._l(
-                                                              _vm.floorNames,
-                                                              function(
-                                                                floorName,
-                                                                i
-                                                              ) {
-                                                                return _c(
-                                                                  "option",
-                                                                  {
-                                                                    key: i,
-                                                                    domProps: {
-                                                                      value:
-                                                                        floorName.id
-                                                                    }
-                                                                  },
-                                                                  [
-                                                                    _vm._v(
-                                                                      _vm._s(
-                                                                        floorName.letter
-                                                                      ) +
-                                                                        " - " +
-                                                                        _vm._s(
-                                                                          floorName.name
-                                                                        )
-                                                                    )
-                                                                  ]
-                                                                )
-                                                              }
-                                                            )
-                                                          ],
-                                                          2
-                                                        )
-                                                      ]
-                                                    )
-                                                  ])
-                                                ])
-                                              }
-                                            ),
-                                            0
+                                            [_vm._v(_vm._s(building.number))]
                                           )
-                                        ]
-                                      )
-                                    ]
-                                  )
-                                ],
-                                1
-                              ),
-                              _vm._v(" "),
-                              _c("div", { staticClass: "card-footer" }, [
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-info",
-                                    attrs: { type: "submit" },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.addLift()
+                                        })
+                                      ],
+                                      2
+                                    )
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "form-group row" }, [
+                                  _c(
+                                    "label",
+                                    {
+                                      staticClass:
+                                        "col-sm-2 col-form-label text-sm-right",
+                                      attrs: { for: "liftNumber" }
+                                    },
+                                    [_vm._v("Lift #")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "col-sm-10" }, [
+                                    _c(
+                                      "select",
+                                      {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: _vm.newLiftForm.lift_number,
+                                            expression:
+                                              "newLiftForm.lift_number"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        class: {
+                                          "is-invalid": _vm.newLiftForm.errors.has(
+                                            "lift_number"
+                                          )
+                                        },
+                                        attrs: { id: "liftNumber" },
+                                        on: {
+                                          change: function($event) {
+                                            var $$selectedVal = Array.prototype.filter
+                                              .call(
+                                                $event.target.options,
+                                                function(o) {
+                                                  return o.selected
+                                                }
+                                              )
+                                              .map(function(o) {
+                                                var val =
+                                                  "_value" in o
+                                                    ? o._value
+                                                    : o.value
+                                                return val
+                                              })
+                                            _vm.$set(
+                                              _vm.newLiftForm,
+                                              "lift_number",
+                                              $event.target.multiple
+                                                ? $$selectedVal
+                                                : $$selectedVal[0]
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "",
+                                              selected: "",
+                                              disabled: ""
+                                            }
+                                          },
+                                          [_vm._v("Select lift #")]
+                                        ),
+                                        _vm._v(" "),
+                                        _vm._l(30, function(i) {
+                                          return _c(
+                                            "option",
+                                            { key: i, domProps: { value: i } },
+                                            [_vm._v(_vm._s(i))]
+                                          )
+                                        })
+                                      ],
+                                      2
+                                    )
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "form-group row" }, [
+                                  _c(
+                                    "label",
+                                    {
+                                      staticClass:
+                                        "col-sm-2 col-form-label text-sm-right",
+                                      attrs: { for: "description" }
+                                    },
+                                    [_vm._v("Description")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "col-sm-10" }, [
+                                    _c("textarea", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.newLiftForm.description,
+                                          expression: "newLiftForm.description"
+                                        }
+                                      ],
+                                      staticClass: "form-control",
+                                      attrs: {
+                                        id: "description",
+                                        rows: "3",
+                                        placeholder: "Enter lift description"
+                                      },
+                                      domProps: {
+                                        value: _vm.newLiftForm.description
+                                      },
+                                      on: {
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.$set(
+                                            _vm.newLiftForm,
+                                            "description",
+                                            $event.target.value
+                                          )
+                                        }
                                       }
-                                    }
-                                  },
-                                  [_vm._v("Save")]
-                                ),
+                                    })
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "form-group row" }, [
+                                  _c(
+                                    "label",
+                                    {
+                                      staticClass:
+                                        "col-sm-2 col-form-label text-sm-right",
+                                      attrs: { for: "floorCount" }
+                                    },
+                                    [_vm._v("Floors")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "col-sm-10" }, [
+                                    _c(
+                                      "select",
+                                      {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: _vm.newLiftForm.floor_count,
+                                            expression:
+                                              "newLiftForm.floor_count"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        attrs: { id: "floorCount" },
+                                        on: {
+                                          change: function($event) {
+                                            var $$selectedVal = Array.prototype.filter
+                                              .call(
+                                                $event.target.options,
+                                                function(o) {
+                                                  return o.selected
+                                                }
+                                              )
+                                              .map(function(o) {
+                                                var val =
+                                                  "_value" in o
+                                                    ? o._value
+                                                    : o.value
+                                                return val
+                                              })
+                                            _vm.$set(
+                                              _vm.newLiftForm,
+                                              "floor_count",
+                                              $event.target.multiple
+                                                ? $$selectedVal
+                                                : $$selectedVal[0]
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c(
+                                          "option",
+                                          {
+                                            attrs: {
+                                              value: "0",
+                                              selected: "",
+                                              disabled: ""
+                                            }
+                                          },
+                                          [_vm._v("Select number of floors")]
+                                        ),
+                                        _vm._v(" "),
+                                        _vm._l(50, function(i) {
+                                          return _c(
+                                            "option",
+                                            { key: i, domProps: { value: i } },
+                                            [_vm._v(_vm._s(i))]
+                                          )
+                                        })
+                                      ],
+                                      2
+                                    )
+                                  ])
+                                ]),
                                 _vm._v(" "),
                                 _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-default float-right",
-                                    attrs: { type: "submit" },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.cancelAddLift()
-                                      }
-                                    }
-                                  },
-                                  [_vm._v("Cancel")]
+                                  "div",
+                                  { staticClass: "col-sm-6 offset-sm-2" },
+                                  [
+                                    _c(
+                                      "table",
+                                      { staticClass: "table table-sm" },
+                                      [
+                                        _vm._m(11),
+                                        _vm._v(" "),
+                                        _c(
+                                          "tbody",
+                                          _vm._l(
+                                            _vm.newLiftForm.floor_count,
+                                            function(i) {
+                                              return _c("tr", { key: i }, [
+                                                _c("td", [
+                                                  _vm._v(_vm._s(i) + ".")
+                                                ]),
+                                                _vm._v(" "),
+                                                _c("td", [
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      staticClass: "form-group"
+                                                    },
+                                                    [
+                                                      _c(
+                                                        "select",
+                                                        {
+                                                          staticClass:
+                                                            "form-control form-control-sm select2",
+                                                          staticStyle: {
+                                                            width: "100%"
+                                                          },
+                                                          attrs: {
+                                                            id:
+                                                              "floor-name-" + i
+                                                          }
+                                                        },
+                                                        [
+                                                          _c("option", {
+                                                            attrs: {
+                                                              value: "",
+                                                              selected: "",
+                                                              disabled: ""
+                                                            }
+                                                          }),
+                                                          _vm._v(" "),
+                                                          _vm._l(
+                                                            _vm.floorNames,
+                                                            function(
+                                                              floorName,
+                                                              i
+                                                            ) {
+                                                              return _c(
+                                                                "option",
+                                                                {
+                                                                  key: i,
+                                                                  domProps: {
+                                                                    value:
+                                                                      floorName.id
+                                                                  }
+                                                                },
+                                                                [
+                                                                  _vm._v(
+                                                                    _vm._s(
+                                                                      floorName.letter
+                                                                    ) +
+                                                                      " - " +
+                                                                      _vm._s(
+                                                                        floorName.name
+                                                                      )
+                                                                  )
+                                                                ]
+                                                              )
+                                                            }
+                                                          )
+                                                        ],
+                                                        2
+                                                      )
+                                                    ]
+                                                  )
+                                                ])
+                                              ])
+                                            }
+                                          ),
+                                          0
+                                        )
+                                      ]
+                                    )
+                                  ]
                                 )
-                              ])
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "card-footer" }, [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-info",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.addLift()
+                                    }
+                                  }
+                                },
+                                [_vm._v("Save")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-default float-right",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.cancelAddLift()
+                                    }
+                                  }
+                                },
+                                [_vm._v("Cancel")]
+                              )
                             ])
                           ]
                         )

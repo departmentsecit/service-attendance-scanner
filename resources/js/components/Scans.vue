@@ -40,6 +40,13 @@
                 <div class="card card-secondary">
                     <div class="card-header">
                         <h3 class="card-title">Scans List</h3>
+                        <div class="card-tools">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-tool" title="update list" @click="fetchScanLogs()">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -49,21 +56,21 @@
                                     <th>Technician</th>
                                     <th>Project Name</th>
                                     <th class="text-center">Bldg Num</th>
-                                    <th class="text-center">Left Num</th>
+                                    <th class="text-center">Lift Num</th>
                                     <th class="text-center">Floor</th>
                                     <th class="text-center">Date & Time</th>
                                     <th class="text-center">Check Type</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Jun Rey</td>
-                                    <td>NMB Head Quarter</td>
-                                    <td class="text-center">1</td>
-                                    <td class="text-center">3</td>
-                                    <td class="text-center">G</td>
-                                    <td class="text-center">Sep 4, 2020 1:12:00 PM</td>
-                                    <td class="text-center">Out</td>
+                                <tr v-for="(scanLog,i) in scanLogs" :key="i" :class="scanLog.check_type == 'out' ? 'text-warning' : 'text-success'">
+                                    <td>{{ scanLog.user.first_name }}</td>
+                                    <td>{{ scanLog.project.name }}</td>
+                                    <td class="text-center">{{ scanLog.building.number }}</td>
+                                    <td class="text-center">{{ scanLog.lift.number }}</td>
+                                    <td class="text-center">{{ scanLog.floor.name }}</td>
+                                    <td class="text-center">{{ scanLog.date_time_log }}</td>
+                                    <td class="text-center">{{ scanLog.check_type }}</td>
                                 </tr>
 
                             </tbody>
@@ -163,7 +170,7 @@
                         
                         <div class="col-12">
                             <div class="form-group">
-                                <select class="form-control select2" style="width: 100%;">
+                                <select class="form-control select2" id="filter_user" style="width: 100%;">
                                     <option selected="selected">All</option>
                                     <option>Mr. Qiu</option>
                                     <option>Mr. Yang</option>
@@ -175,7 +182,7 @@
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-outline-light">Set</button>
+                        <button type="button" class="btn btn-outline-light" @click="setFilter('user')">Set</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -197,10 +204,10 @@
                         
                         <div class="col-12">
                             <div class="form-group">
-                                <select class="form-control select2" style="width: 100%;">
-                                    <option selected="selected">All</option>
-                                    <option>Check In</option>
-                                    <option>Check Out</option>
+                                <select class="form-control select2" id="filter_check_type" style="width: 100%;">
+                                    <option value="" selected="selected">All</option>
+                                    <option value="in">Check In</option>
+                                    <option value="out">Check Out</option>
                                 </select>
                             </div>
                         </div>
@@ -208,7 +215,7 @@
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-outline-light">Set</button>
+                        <button type="button" class="btn btn-outline-light" @click="setFilter('checkType')">Set</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -224,21 +231,16 @@
 export default {
     data(){
         return{
-
+            scanLogs: [],
+            filters: {
+                project: '',
+                user: '',
+                check_type: '',
+            }
         }
     },
     mounted(){
-
-        $('#scans-list').DataTable({
-            "paging": true,
-            "pageLength": 100,
-            "lengthChange": false,
-            "searching": false,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
-        });
+        this.fetchScanLogs();
 
         //Date range picker
         $('#date-range').daterangepicker();
@@ -250,6 +252,74 @@ export default {
         $('.select2bs4').select2({
             theme: 'bootstrap4'
         });
+     
+        // search for rAF instead of using the setInterval
+        // https://dev.opera.com/articles/better-performance-with-requestanimationframe/
+        let myVar = setInterval(()=>this.fetchScanLogs(), 3000);
+
+        // clearInterval(myVar);
+    },
+    methods:{
+        async fetchScanLogs(){
+
+            let myFilters = '';
+            myFilters = this.filters.project != '' ? myFilters+'project='+this.filters.project+'&' : '';
+            myFilters = this.filters.user != '' ? myFilters+'user='+this.filters.user+'&' : '';
+            myFilters = this.filters.check_type != '' ? (myFilters+'check_type='+this.filters.check_type+'&') : '';
+
+            await axios.get('/scans?'+myFilters)
+                    .then((res)=>{
+                        if ($.fn.DataTable.isDataTable('#scans-list')) $('#scans-list').DataTable().destroy();
+                        this.scanLogs = res.data.data;
+                    });
+
+            $('#scans-list').DataTable({
+                    "paging": true,
+                    "pageLength": 100,
+                    "lengthChange": false,
+                    "searching": false,
+                    "ordering": true,
+                    "info": true,
+                    "autoWidth": false,
+                    "responsive": true,
+                });
+        },
+        fetchUser(){
+
+            // create other controller that will return limited columns only for dropdown use
+            axios.get('/users')
+                .then((response) => {
+                    this.users = response.data.data;                   
+                })
+                .catch((error) => {
+                    if (error.response.status == 401) {
+                        alert('User session has expired. Please login again.');
+                        location.replace("/login");
+                    }
+                });
+        },
+        setFilter(toFilter){
+            switch (toFilter) {
+                case 'checkType':
+                        this.filters.check_type = $('#filter_check_type').val();
+                        $('#check-type-modal').modal('hide');
+                    break;
+                case 'user':
+                        this.filters.user = $('#filter_user').val();
+                        $('#user-modal').modal('hide');
+                    break;
+                case 'project':
+                        this.filters.project = $('#filter_project').val();
+                        $('#project-site-modal').modal('hide');
+                    break;
+                case 'dateRange':
+                        this.filters.project = $('#filter_date_range').val();
+                        $('#date-range-modal').modal('hide');
+                    break;
+            }
+
+            this.fetchScanLogs();
+        }
     }
 }
 </script>

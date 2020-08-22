@@ -18,7 +18,7 @@ class APILoginController extends Controller
         $credentials = array_merge($login, ['Status' => 'Active']);
 
         if (!Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Invalid login credentials.']);
+            return response(['message' => 'Invalid login credentials.'],404);
         }
 
         $token = Auth::user()->createToken('authToken')->accessToken;

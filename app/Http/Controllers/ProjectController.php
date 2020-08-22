@@ -10,6 +10,7 @@ use App\Http\Resources\ProjectResource;
 
 class ProjectController extends Controller
 {
+
      /**
      * Show all projects
      */
@@ -40,9 +41,6 @@ class ProjectController extends Controller
         ]);
 
        
-
-        
-
         DB::beginTransaction();
         try {
             

@@ -172,11 +172,11 @@ export default {
             buildings: [],
             lifts: [],
             floors: [],
-            generateQRCodeForm: {
+            generateQRCodeForm: new Form({
                 building: "",
                 lift: "",
                 floors: []
-            },
+            }),
         }
     },
     mounted(){
@@ -197,6 +197,7 @@ export default {
             this.generateQRCodeForm.reset();
             this.generateQRCodeForm.clear();
         });
+
     },
     watch:{
         'generateQRCodeForm.building'(newVal){
@@ -265,9 +266,17 @@ export default {
         generateQRCodeModal(){
 
             // add code here to check if floors parameter is not empty 
+            if (this.generateQRCodeForm.floors.length > 0) {
+                window.open('/qr-code/generate/print?building='+this.generateQRCodeForm.building+'&lift='+this.generateQRCodeForm.lift+'&floors='+this.generateQRCodeForm.floors, '_blank');
+                $('generate-qr-modal').modal('hide');
+            } else {
+                Swal.fire(
+                        'Error!',
+                        'Please select at least 1 floor.',
+                        'error'
+                    );
+            }
 
-            window.open('/qr-code/generate/print?building='+this.generateQRCodeForm.building+'&lift='+this.generateQRCodeForm.lift+'&floors='+this.generateQRCodeForm.floors, '_blank');
-            $('generate-qr-modal').modal('hide');
             
         }
     }

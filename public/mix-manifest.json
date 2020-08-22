@@ -6,5 +6,6 @@
     "/project-site.js": "/project-site.js",
     "/scans.js": "/scans.js",
     "/users.js": "/users.js",
-    "/vendors~project-site.js": "/vendors~project-site.js"
+    "/vendors~project-site.js": "/vendors~project-site.js",
+    "/vendors~project-site~scans.js": "/vendors~project-site~scans.js"
 }
