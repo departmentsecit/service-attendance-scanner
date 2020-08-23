@@ -253,11 +253,12 @@ export default {
             theme: 'bootstrap4'
         });
      
+        // sample changes here
         // search for rAF instead of using the setInterval
         // https://dev.opera.com/articles/better-performance-with-requestanimationframe/
-        let myVar = setInterval(()=>this.fetchScanLogs(), 3000);
+        let mySetIntervalVar = setInterval(()=>this.fetchScanLogs(), 3000);
 
-        // clearInterval(myVar);
+        // clearInterval(mySetIntervalVar);
     },
     methods:{
         async fetchScanLogs(){
