@@ -13,7 +13,12 @@
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
-
+// Route::get('/download/sas-v2', function(){
+//     $file=Storage::disk('public/assets/app')->get('sas-v1.apk');
+ 
+// 		return (new Response($file, 200))
+//               ->header('Content-Type', 'image/jpeg');
+// });
 
 Route::middleware('auth')->group(function(){
 
