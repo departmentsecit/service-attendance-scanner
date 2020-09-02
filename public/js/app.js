@@ -43,7 +43,7 @@
 /******/
 /******/ 	// script path function
 /******/ 	function jsonpScriptSrc(chunkId) {
-/******/ 		return __webpack_require__.p + "" + ({"dashboard":"dashboard","users":"users","vendors~project-site~scans":"vendors~project-site~scans","scans":"scans","vendors~project-site":"vendors~project-site","project-site":"project-site"}[chunkId]||chunkId) + ".js"
+/******/ 		return __webpack_require__.p + "" + ({"dashboard":"dashboard","users":"users","vendors~project-site~scans":"vendors~project-site~scans","project-site":"project-site","scans":"scans"}[chunkId]||chunkId) + ".js"
 /******/ 	}
 /******/
 /******/ 	// The require function
@@ -96649,6 +96649,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vform__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vform__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_4__);
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
@@ -96689,9 +96691,30 @@ window.toast = sweetalert2__WEBPACK_IMPORTED_MODULE_3___default.a.mixin({
   showConfirmButton: false,
   timer: 3000
 });
+/***********************************************************
+ * Set Vue Filters Here..
+ */
+// this format the Date
+
+
+Vue.filter('formatDate', function (value, formatType) {
+  formatType = formatType == null ? 'MMM DD, YYYY' : formatType;
+  return moment__WEBPACK_IMPORTED_MODULE_4___default()(String(value)).format(formatType);
+});
+/***********************************************************
+ * Other userfull JS Initialization
+ */
+// Add prototype for Date format to add days
+
+Date.prototype.addDays = function (days) {
+  var date = new Date(this.valueOf());
+  date.setDate(date.getDate() + days);
+  return date;
+};
 /*****************************
  * Initialize new Vue instance
  */
+
 
 var app = new Vue({
   el: '#app',
@@ -96799,15 +96822,15 @@ var Scans = function Scans() {
 };
 
 var ProjectSites = function ProjectSites() {
-  return Promise.all(/*! import() | project-site */[__webpack_require__.e("vendors~project-site~scans"), __webpack_require__.e("vendors~project-site"), __webpack_require__.e("project-site")]).then(__webpack_require__.bind(null, /*! ./components/projects/ProjectSites.vue */ "./resources/js/components/projects/ProjectSites.vue"));
+  return Promise.all(/*! import() | project-site */[__webpack_require__.e("vendors~project-site~scans"), __webpack_require__.e("project-site")]).then(__webpack_require__.bind(null, /*! ./components/projects/ProjectSites.vue */ "./resources/js/components/projects/ProjectSites.vue"));
 };
 
 var ProjectAdd = function ProjectAdd() {
-  return Promise.all(/*! import() | project-site */[__webpack_require__.e("vendors~project-site~scans"), __webpack_require__.e("vendors~project-site"), __webpack_require__.e("project-site")]).then(__webpack_require__.bind(null, /*! ./components/projects/ProjectAdd.vue */ "./resources/js/components/projects/ProjectAdd.vue"));
+  return Promise.all(/*! import() | project-site */[__webpack_require__.e("vendors~project-site~scans"), __webpack_require__.e("project-site")]).then(__webpack_require__.bind(null, /*! ./components/projects/ProjectAdd.vue */ "./resources/js/components/projects/ProjectAdd.vue"));
 };
 
 var FloorNames = function FloorNames() {
-  return Promise.all(/*! import() | project-site */[__webpack_require__.e("vendors~project-site~scans"), __webpack_require__.e("vendors~project-site"), __webpack_require__.e("project-site")]).then(__webpack_require__.bind(null, /*! ./components/FloorNames.vue */ "./resources/js/components/FloorNames.vue"));
+  return Promise.all(/*! import() | project-site */[__webpack_require__.e("vendors~project-site~scans"), __webpack_require__.e("project-site")]).then(__webpack_require__.bind(null, /*! ./components/FloorNames.vue */ "./resources/js/components/FloorNames.vue"));
 };
 
 var routes = [{

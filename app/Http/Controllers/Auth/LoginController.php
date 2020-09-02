@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -44,4 +45,16 @@ class LoginController extends Controller
     {
         return 'username';
     }
+<<<<<<< HEAD
+=======
+
+    /**
+     * Override the default function for checking the credentials
+     */
+    public function credentials(Request $request)
+    {
+   
+        return array_merge($request->only($this->username(), 'password'), ['status' => 'Active']);
+    }
+>>>>>>> c35af27bf97fe60b62b041d006c140982546dc96
 }

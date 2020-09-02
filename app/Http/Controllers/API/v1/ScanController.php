@@ -15,6 +15,7 @@ class ScanController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate([
             'user_id'   => ['required','integer'],
             'floor_id'  => ['required', 'integer'],
@@ -48,6 +49,54 @@ class ScanController extends Controller
         ]);
 
         return response(['error'=>false,'message','successfully added.']);
+        
+    }
+
+     /**
+     * Save new scan logs in bulk
+     */
+    public function storeBulk(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            foreach ($request->all() as $r) {
+
+                // retrieve other floor information
+                $floorInfo = DB::table('floors')
+                ->select(
+                    'id', 
+                    'lift_id',
+                    DB::raw('(SELECT building_id FROM `lifts` WHERE id =  floors.lift_id) as building_id'),
+                    DB::raw('(SELECT project_id FROM `lifts` WHERE id =  floors.lift_id) as project_id'),
+                    DB::raw('(SELECT country_id FROM `projects` WHERE id =  project_id) as country_id'),
+                    DB::raw('(SELECT city_id FROM `projects` WHERE id =  project_id) as city_id'))
+                ->where('id',$r['floor_id'])
+                ->first();
+
+                // Add scan log to scans table
+                Scan::create([
+                    'user_id' => $r['user_id'],
+                    'country_id' => $floorInfo->country_id,
+                    'city_id' => $floorInfo->city_id, 
+                    'project_id' => $floorInfo->project_id,
+                    'building_id' => $floorInfo->building_id,
+                    'lift_id' => $floorInfo->lift_id,
+                    'floor_id' => $floorInfo->id,
+                    'check_type' => $r['check_type'],
+                    'date_time_log' => $r['date_time_log']
+                ]);
+            }
+
+
+            // commit all insert commands
+            DB::commit();
+            return response(['error'=>false,'message'=>'successfully added.']);
+
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return response(['error'=>true,'message'=>'An arror occured while saving information.'],500);
+        }
         
     }
 }

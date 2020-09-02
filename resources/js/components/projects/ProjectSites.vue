@@ -75,7 +75,7 @@
                                       <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#generate-qr-modal" @click="getBuildings(project.id)"> <i class="fas fa-qrcode"></i> Code</button>
                                       <button class="btn btn-info btn-sm"> <i class="fas fa-eye"></i> View</button>
                                       <button class="btn btn-warning btn-sm"> <i class="fas fa-pen"></i> Edit</button>
-                                      <button class="btn btn-danger btn-sm"> <i class="fas fa-trash"></i> Delete</button>
+                                      <button class="btn btn-danger btn-sm" @click="deleteProject(project.id)"> <i class="fas fa-trash"></i> Delete</button>
                                     </td>
                                 </tr>
 
@@ -278,6 +278,37 @@ export default {
             }
 
             
+        },
+        deleteProject(id){
+         
+            Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.value) {
+                        
+                        axios.delete('/project/'+id)
+                            .then((res)=>{
+                                this.getProjects();
+                                toast.fire({
+                                    icon: 'success',
+                                    title: 'Project has bee deleted'
+                                });
+                            })
+                            .catch((error) => {
+                                if (error.response.status == 401) {
+                                    alert('User session has expired. Please login again.');
+                                    location.replace("/login");
+                                }
+                            });
+                    }
+                });
+
         }
     }
 }

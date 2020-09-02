@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Resources\ScanResource;
 use App\Scan;
 use Illuminate\Validation\Rule;
+use Carbon\Carbon;
 
 class ScanController extends Controller
 {
@@ -22,7 +23,7 @@ class ScanController extends Controller
             'paginate'      => ['integer'],
             'project'       => ['integer'],
             'user'          => ['integer'],
-            'check_type'    => [Rule::in(['in', 'out'])]
+            'check_type'    => [Rule::in(['in', 'out'])],
         ]);
 
         $floorInfo = Scan::select(
@@ -46,6 +47,13 @@ class ScanController extends Controller
                             })
                             ->when($request['check_type'],function($q,$check_type){
                                 return $q->where('check_type',$check_type);
+                            })
+                            ->when($request['date_range'],function($q,$date_range){
+                                $dateRange = explode(' - ',$date_range);
+                                $dateRangeFrom = new  Carbon($dateRange[0]);
+                                $dateRangeTo = new Carbon($dateRange[1]);
+                                // return $q->where('date_time_log','>=',$dateRangeFrom)->where('date_time_log','<=');
+                                return $q->whereBetween('date_time_log', [$dateRangeFrom, $dateRangeTo]);
                             })
                             ->orderBy('date_time_log','desc');
                             

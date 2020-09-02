@@ -7,19 +7,19 @@
                     <div class="col-sm-6">
                         
                         <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#date-range-modal">
-                            <i class="fas fa-calendar-alt mr-1"></i> Sep 1 2020 - Sep 2 2020
+                            <i class="fas fa-calendar-alt mr-1"></i> {{ filters.date_range }}
                         </button>
 
                         <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#project-site-modal">
-                            <i class="fas fa-building mr-1"></i> All
+                            <i class="fas fa-building mr-1"></i> {{ filters.project != '' ? showProjectName(filters.project) : 'All' }}
                         </button>
 
                         <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#user-modal">
-                            <i class="fas fa-user mr-1"></i> All
+                            <i class="fas fa-user mr-1"></i> {{ filters.user != '' ? showUserName(filters.user) : 'All' }}
                         </button>
 
                         <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#check-type-modal">
-                            <i class="fas fa-stopwatch mr-1"></i> All
+                            <i class="fas fa-stopwatch mr-1"></i> {{ filters.check_type != '' ? filters.check_type : 'All' }}
                         </button>
 
                     </div>
@@ -105,14 +105,14 @@
                                         <i class="far fa-calendar-alt"></i>
                                     </span>
                                 </div>
-                                <input type="text" class="form-control float-right" id="date-range">
+                                <input type="text" class="form-control float-right" id="filter_date_range">
                             </div>
                         </div>
 
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-outline-light">Set Date</button>
+                        <button type="button" class="btn btn-outline-light" @click="setFilter('dateRange')">Set Date</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -135,12 +135,9 @@
                         
                         <div class="col-12">
                             <div class="form-group">
-                                <select class="form-control select2" style="width: 100%;">
-                                    <option selected="selected">All</option>
-                                    <option>All</option>
-                                    <option>NMB Head Quarter</option>
-                                    <option>NHC Iconic</option>
-                                    <option>Viva Tower</option>
+                                <select class="form-control select2" id="filter_project" style="width: 100%;">
+                                    <option value="" selected="selected">All</option>
+                                    <option v-for="(project,i) in projects" :key="i" :value="project.id" >{{project.name}}</option>
                                 </select>
                             </div>
                         </div>
@@ -148,7 +145,7 @@
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-outline-light">Set</button>
+                        <button type="button" class="btn btn-outline-light" @click="setFilter('project')">Set</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -171,10 +168,8 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <select class="form-control select2" id="filter_user" style="width: 100%;">
-                                    <option selected="selected">All</option>
-                                    <option>Mr. Qiu</option>
-                                    <option>Mr. Yang</option>
-                                    <option>Mr. Zhuang</option>
+                                    <option value="" selected="selected">All</option>
+                                    <option v-for="(user,i) in users" :key="i" :value="user.id">{{ user.first_name }} {{ user.last_name }}</option>
                                 </select>
                             </div>
                         </div>
@@ -232,18 +227,33 @@ export default {
     data(){
         return{
             scanLogs: [],
+            users: [],
+            projects: [],
             filters: {
                 project: '',
                 user: '',
                 check_type: '',
+                date_range: '',
             }
         }
     },
     mounted(){
+
+        // set the date default date range
+        let curDate = new Date();
+        let curDateFrom = this.$options.filters.formatDate(curDate,'MM/DD/YYYY');
+        let curDateTo = this.$options.filters.formatDate(curDate.addDays(1),'MM/DD/YYYY');
+        this.filters.date_range = curDateFrom +' - '+curDateTo;
+
         this.fetchScanLogs();
+        this.fetchUser();
+        this.fetchProjects();
 
         //Date range picker
-        $('#date-range').daterangepicker();
+        $('#filter_date_range').daterangepicker({
+            startDate: curDateFrom,
+            endDate: curDateTo
+        });
 
         //Initialize Select2 Elements
         $('.select2').select2();
@@ -252,21 +262,21 @@ export default {
         $('.select2bs4').select2({
             theme: 'bootstrap4'
         });
-     
-        // search for rAF instead of using the setInterval
-        // https://dev.opera.com/articles/better-performance-with-requestanimationframe/
-        let myVar = setInterval(()=>this.fetchScanLogs(), 3000);
 
-        // clearInterval(myVar);
+        let mySetIntervalVar = setInterval(()=>this.fetchScanLogs(), 3000);
+        // clearInterval(mySetIntervalVar);
+
     },
     methods:{
         async fetchScanLogs(){
-
+ 
             let myFilters = '';
-            myFilters = this.filters.project != '' ? myFilters+'project='+this.filters.project+'&' : '';
-            myFilters = this.filters.user != '' ? myFilters+'user='+this.filters.user+'&' : '';
-            myFilters = this.filters.check_type != '' ? (myFilters+'check_type='+this.filters.check_type+'&') : '';
-
+            
+            myFilters = myFilters + (this.filters.project != '' ? 'project='+this.filters.project+'&' : '');
+            myFilters = myFilters + (this.filters.user != '' ? 'user='+this.filters.user+'&' : '');
+            myFilters = myFilters + (this.filters.check_type != '' ? 'check_type='+this.filters.check_type+'&' : '');
+            myFilters = myFilters + (this.filters.date_range != '' ? 'date_range='+this.filters.date_range+'&' : '');
+ 
             await axios.get('/scans?'+myFilters)
                     .then((res)=>{
                         if ($.fn.DataTable.isDataTable('#scans-list')) $('#scans-list').DataTable().destroy();
@@ -279,6 +289,7 @@ export default {
                     "lengthChange": false,
                     "searching": false,
                     "ordering": true,
+                    "order": [],
                     "info": true,
                     "autoWidth": false,
                     "responsive": true,
@@ -290,6 +301,20 @@ export default {
             axios.get('/users')
                 .then((response) => {
                     this.users = response.data.data;                   
+                })
+                .catch((error) => {
+                    if (error.response.status == 401) {
+                        alert('User session has expired. Please login again.');
+                        location.replace("/login");
+                    }
+                });
+        },
+        fetchProjects(){
+
+            // create other controller that will return limited columns only for dropdown use
+            axios.get('/projects')
+                .then((response) => {
+                    this.projects = response.data.data;                   
                 })
                 .catch((error) => {
                     if (error.response.status == 401) {
@@ -313,12 +338,20 @@ export default {
                         $('#project-site-modal').modal('hide');
                     break;
                 case 'dateRange':
-                        this.filters.project = $('#filter_date_range').val();
+                        this.filters.date_range = $('#filter_date_range').val();
                         $('#date-range-modal').modal('hide');
                     break;
             }
 
             this.fetchScanLogs();
+        },
+        showUserName(id){
+            let user = this.users.find(u => u.id == id);            
+            return user.first_name;
+        },
+        showProjectName(id){
+            let project = this.projects.find(p => p.id == id);            
+            return project.name;
         }
     }
 }
