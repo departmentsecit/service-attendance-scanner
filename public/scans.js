@@ -241,39 +241,45 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       scanLogs: [],
+      users: [],
+      projects: [],
       filters: {
         project: '',
         user: '',
-        check_type: ''
+        check_type: '',
+        date_range: ''
       }
     };
   },
   mounted: function mounted() {
     var _this = this;
 
-    this.fetchScanLogs(); //Date range picker
+    // set the date default date range
+    var curDate = new Date();
+    var curDateFrom = this.$options.filters.formatDate(curDate, 'MM/DD/YYYY');
+    var curDateTo = this.$options.filters.formatDate(curDate.addDays(1), 'MM/DD/YYYY');
+    this.filters.date_range = curDateFrom + ' - ' + curDateTo;
+    this.fetchScanLogs();
+    this.fetchUser();
+    this.fetchProjects(); //Date range picker
 
-    $('#date-range').daterangepicker(); //Initialize Select2 Elements
+    $('#filter_date_range').daterangepicker({
+      startDate: curDateFrom,
+      endDate: curDateTo
+    }); //Initialize Select2 Elements
 
     $('.select2').select2(); //Initialize Select2 Elements
 
     $('.select2bs4').select2({
       theme: 'bootstrap4'
-    }); // search for rAF instead of using the setInterval
-    // https://dev.opera.com/articles/better-performance-with-requestanimationframe/
-
-    var myVar = setInterval(function () {
+    });
+    var mySetIntervalVar = setInterval(function () {
       return _this.fetchScanLogs();
-    }, 3000); // clearInterval(myVar);
+    }, 3000); // clearInterval(mySetIntervalVar);
   },
   methods: {
     fetchScanLogs: function fetchScanLogs() {
@@ -286,28 +292,30 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context.prev = _context.next) {
               case 0:
                 myFilters = '';
-                myFilters = _this2.filters.project != '' ? myFilters + 'project=' + _this2.filters.project + '&' : '';
-                myFilters = _this2.filters.user != '' ? myFilters + 'user=' + _this2.filters.user + '&' : '';
-                myFilters = _this2.filters.check_type != '' ? myFilters + 'check_type=' + _this2.filters.check_type + '&' : '';
-                _context.next = 6;
+                myFilters = myFilters + (_this2.filters.project != '' ? 'project=' + _this2.filters.project + '&' : '');
+                myFilters = myFilters + (_this2.filters.user != '' ? 'user=' + _this2.filters.user + '&' : '');
+                myFilters = myFilters + (_this2.filters.check_type != '' ? 'check_type=' + _this2.filters.check_type + '&' : '');
+                myFilters = myFilters + (_this2.filters.date_range != '' ? 'date_range=' + _this2.filters.date_range + '&' : '');
+                _context.next = 7;
                 return axios.get('/scans?' + myFilters).then(function (res) {
                   if ($.fn.DataTable.isDataTable('#scans-list')) $('#scans-list').DataTable().destroy();
                   _this2.scanLogs = res.data.data;
                 });
 
-              case 6:
+              case 7:
                 $('#scans-list').DataTable({
                   "paging": true,
                   "pageLength": 100,
                   "lengthChange": false,
                   "searching": false,
                   "ordering": true,
+                  "order": [],
                   "info": true,
                   "autoWidth": false,
                   "responsive": true
                 });
 
-              case 7:
+              case 8:
               case "end":
                 return _context.stop();
             }
@@ -321,6 +329,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       // create other controller that will return limited columns only for dropdown use
       axios.get('/users').then(function (response) {
         _this3.users = response.data.data;
+      })["catch"](function (error) {
+        if (error.response.status == 401) {
+          alert('User session has expired. Please login again.');
+          location.replace("/login");
+        }
+      });
+    },
+    fetchProjects: function fetchProjects() {
+      var _this4 = this;
+
+      // create other controller that will return limited columns only for dropdown use
+      axios.get('/projects').then(function (response) {
+        _this4.projects = response.data.data;
       })["catch"](function (error) {
         if (error.response.status == 401) {
           alert('User session has expired. Please login again.');
@@ -346,12 +367,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           break;
 
         case 'dateRange':
-          this.filters.project = $('#filter_date_range').val();
+          this.filters.date_range = $('#filter_date_range').val();
           $('#date-range-modal').modal('hide');
           break;
       }
 
       this.fetchScanLogs();
+    },
+    showUserName: function showUserName(id) {
+      var user = this.users.find(function (u) {
+        return u.id == id;
+      });
+      return user.first_name;
+    },
+    showProjectName: function showProjectName(id) {
+      var project = this.projects.find(function (p) {
+        return p.id == id;
+      });
+      return project.name;
     }
   }
 });
@@ -374,7 +407,107 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _vm._m(0),
+    _c("section", { staticClass: "content-header" }, [
+      _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "row mb-2" }, [
+          _c("div", { staticClass: "col-sm-6" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-sm btn-secondary",
+                attrs: {
+                  type: "button",
+                  "data-toggle": "modal",
+                  "data-target": "#date-range-modal"
+                }
+              },
+              [
+                _c("i", { staticClass: "fas fa-calendar-alt mr-1" }),
+                _vm._v(
+                  " " +
+                    _vm._s(_vm.filters.date_range) +
+                    "\n                    "
+                )
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-sm btn-secondary",
+                attrs: {
+                  type: "button",
+                  "data-toggle": "modal",
+                  "data-target": "#project-site-modal"
+                }
+              },
+              [
+                _c("i", { staticClass: "fas fa-building mr-1" }),
+                _vm._v(
+                  " " +
+                    _vm._s(
+                      _vm.filters.project != ""
+                        ? _vm.showProjectName(_vm.filters.project)
+                        : "All"
+                    ) +
+                    "\n                    "
+                )
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-sm btn-secondary",
+                attrs: {
+                  type: "button",
+                  "data-toggle": "modal",
+                  "data-target": "#user-modal"
+                }
+              },
+              [
+                _c("i", { staticClass: "fas fa-user mr-1" }),
+                _vm._v(
+                  " " +
+                    _vm._s(
+                      _vm.filters.user != ""
+                        ? _vm.showUserName(_vm.filters.user)
+                        : "All"
+                    ) +
+                    "\n                    "
+                )
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-sm btn-secondary",
+                attrs: {
+                  type: "button",
+                  "data-toggle": "modal",
+                  "data-target": "#check-type-modal"
+                }
+              },
+              [
+                _c("i", { staticClass: "fas fa-stopwatch mr-1" }),
+                _vm._v(
+                  " " +
+                    _vm._s(
+                      _vm.filters.check_type != ""
+                        ? _vm.filters.check_type
+                        : "All"
+                    ) +
+                    "\n                    "
+                )
+              ]
+            )
+          ]),
+          _vm._v(" "),
+          _vm._m(0)
+        ])
+      ])
+    ]),
     _vm._v(" "),
     _c("section", { staticClass: "content" }, [
       _c("div", { staticClass: "col-12" }, [
@@ -459,16 +592,154 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
-    _vm._m(2),
+    _c(
+      "div",
+      { staticClass: "modal fade", attrs: { id: "date-range-modal" } },
+      [
+        _c("div", { staticClass: "modal-dialog" }, [
+          _c("div", { staticClass: "modal-content bg-secondary" }, [
+            _vm._m(2),
+            _vm._v(" "),
+            _vm._m(3),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-footer justify-content-between" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-outline-light",
+                  attrs: { type: "button", "data-dismiss": "modal" }
+                },
+                [_vm._v("Close")]
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-outline-light",
+                  attrs: { type: "button" },
+                  on: {
+                    click: function($event) {
+                      return _vm.setFilter("dateRange")
+                    }
+                  }
+                },
+                [_vm._v("Set Date")]
+              )
+            ])
+          ])
+        ])
+      ]
+    ),
     _vm._v(" "),
-    _vm._m(3),
+    _c(
+      "div",
+      { staticClass: "modal fade", attrs: { id: "project-site-modal" } },
+      [
+        _c("div", { staticClass: "modal-dialog" }, [
+          _c("div", { staticClass: "modal-content bg-secondary" }, [
+            _vm._m(4),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-body" }, [
+              _c("div", { staticClass: "col-12" }, [
+                _c("div", { staticClass: "form-group" }, [
+                  _c(
+                    "select",
+                    {
+                      staticClass: "form-control select2",
+                      staticStyle: { width: "100%" },
+                      attrs: { id: "filter_project" }
+                    },
+                    [
+                      _c(
+                        "option",
+                        { attrs: { value: "", selected: "selected" } },
+                        [_vm._v("All")]
+                      ),
+                      _vm._v(" "),
+                      _vm._l(_vm.projects, function(project, i) {
+                        return _c(
+                          "option",
+                          { key: i, domProps: { value: project.id } },
+                          [_vm._v(_vm._s(project.name))]
+                        )
+                      })
+                    ],
+                    2
+                  )
+                ])
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-footer justify-content-between" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-outline-light",
+                  attrs: { type: "button", "data-dismiss": "modal" }
+                },
+                [_vm._v("Close")]
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-outline-light",
+                  attrs: { type: "button" },
+                  on: {
+                    click: function($event) {
+                      return _vm.setFilter("project")
+                    }
+                  }
+                },
+                [_vm._v("Set")]
+              )
+            ])
+          ])
+        ])
+      ]
+    ),
     _vm._v(" "),
     _c("div", { staticClass: "modal fade", attrs: { id: "user-modal" } }, [
       _c("div", { staticClass: "modal-dialog" }, [
         _c("div", { staticClass: "modal-content bg-secondary" }, [
-          _vm._m(4),
-          _vm._v(" "),
           _vm._m(5),
+          _vm._v(" "),
+          _c("div", { staticClass: "modal-body" }, [
+            _c("div", { staticClass: "col-12" }, [
+              _c("div", { staticClass: "form-group" }, [
+                _c(
+                  "select",
+                  {
+                    staticClass: "form-control select2",
+                    staticStyle: { width: "100%" },
+                    attrs: { id: "filter_user" }
+                  },
+                  [
+                    _c(
+                      "option",
+                      { attrs: { value: "", selected: "selected" } },
+                      [_vm._v("All")]
+                    ),
+                    _vm._v(" "),
+                    _vm._l(_vm.users, function(user, i) {
+                      return _c(
+                        "option",
+                        { key: i, domProps: { value: user.id } },
+                        [
+                          _vm._v(
+                            _vm._s(user.first_name) +
+                              " " +
+                              _vm._s(user.last_name)
+                          )
+                        ]
+                      )
+                    })
+                  ],
+                  2
+                )
+              ])
+            ])
+          ]),
           _vm._v(" "),
           _c("div", { staticClass: "modal-footer justify-content-between" }, [
             _c(
@@ -543,87 +814,13 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("section", { staticClass: "content-header" }, [
-      _c("div", { staticClass: "container-fluid" }, [
-        _c("div", { staticClass: "row mb-2" }, [
-          _c("div", { staticClass: "col-sm-6" }, [
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-sm btn-secondary",
-                attrs: {
-                  type: "button",
-                  "data-toggle": "modal",
-                  "data-target": "#date-range-modal"
-                }
-              },
-              [
-                _c("i", { staticClass: "fas fa-calendar-alt mr-1" }),
-                _vm._v(" Sep 1 2020 - Sep 2 2020\n                    ")
-              ]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-sm btn-secondary",
-                attrs: {
-                  type: "button",
-                  "data-toggle": "modal",
-                  "data-target": "#project-site-modal"
-                }
-              },
-              [
-                _c("i", { staticClass: "fas fa-building mr-1" }),
-                _vm._v(" All\n                    ")
-              ]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-sm btn-secondary",
-                attrs: {
-                  type: "button",
-                  "data-toggle": "modal",
-                  "data-target": "#user-modal"
-                }
-              },
-              [
-                _c("i", { staticClass: "fas fa-user mr-1" }),
-                _vm._v(" All\n                    ")
-              ]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-sm btn-secondary",
-                attrs: {
-                  type: "button",
-                  "data-toggle": "modal",
-                  "data-target": "#check-type-modal"
-                }
-              },
-              [
-                _c("i", { staticClass: "fas fa-stopwatch mr-1" }),
-                _vm._v(" All\n                    ")
-              ]
-            )
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-sm-6" }, [
-            _c("ol", { staticClass: "breadcrumb float-sm-right" }, [
-              _c("li", { staticClass: "breadcrumb-item" }, [
-                _c("a", { attrs: { href: "#" } }, [_vm._v("Scans")])
-              ]),
-              _vm._v(" "),
-              _c("li", { staticClass: "breadcrumb-item active" }, [
-                _vm._v("List")
-              ])
-            ])
-          ])
-        ])
+    return _c("div", { staticClass: "col-sm-6" }, [
+      _c("ol", { staticClass: "breadcrumb float-sm-right" }, [
+        _c("li", { staticClass: "breadcrumb-item" }, [
+          _c("a", { attrs: { href: "#" } }, [_vm._v("Scans")])
+        ]),
+        _vm._v(" "),
+        _c("li", { staticClass: "breadcrumb-item active" }, [_vm._v("List")])
       ])
     ])
   },
@@ -653,166 +850,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "modal fade", attrs: { id: "date-range-modal" } },
-      [
-        _c("div", { staticClass: "modal-dialog" }, [
-          _c("div", { staticClass: "modal-content bg-secondary" }, [
-            _c("div", { staticClass: "modal-header" }, [
-              _c("h4", { staticClass: "modal-title" }, [
-                _vm._v("Filter Date Range")
-              ]),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "close",
-                  attrs: {
-                    type: "button",
-                    "data-dismiss": "modal",
-                    "aria-label": "Close"
-                  }
-                },
-                [
-                  _c("span", { attrs: { "aria-hidden": "true" } }, [
-                    _vm._v("×")
-                  ])
-                ]
-              )
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "modal-body" }, [
-              _c("div", { staticClass: "col-12" }, [
-                _c("div", { staticClass: "input-group" }, [
-                  _c("div", { staticClass: "input-group-prepend" }, [
-                    _c("span", { staticClass: "input-group-text" }, [
-                      _c("i", { staticClass: "far fa-calendar-alt" })
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("input", {
-                    staticClass: "form-control float-right",
-                    attrs: { type: "text", id: "date-range" }
-                  })
-                ])
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "modal-footer justify-content-between" }, [
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-outline-light",
-                  attrs: { type: "button", "data-dismiss": "modal" }
-                },
-                [_vm._v("Close")]
-              ),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-outline-light",
-                  attrs: { type: "button" }
-                },
-                [_vm._v("Set Date")]
-              )
-            ])
-          ])
-        ])
-      ]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "modal fade", attrs: { id: "project-site-modal" } },
-      [
-        _c("div", { staticClass: "modal-dialog" }, [
-          _c("div", { staticClass: "modal-content bg-secondary" }, [
-            _c("div", { staticClass: "modal-header" }, [
-              _c("h4", { staticClass: "modal-title" }, [
-                _vm._v("Filter Project Site")
-              ]),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "close",
-                  attrs: {
-                    type: "button",
-                    "data-dismiss": "modal",
-                    "aria-label": "Close"
-                  }
-                },
-                [
-                  _c("span", { attrs: { "aria-hidden": "true" } }, [
-                    _vm._v("×")
-                  ])
-                ]
-              )
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "modal-body" }, [
-              _c("div", { staticClass: "col-12" }, [
-                _c("div", { staticClass: "form-group" }, [
-                  _c(
-                    "select",
-                    {
-                      staticClass: "form-control select2",
-                      staticStyle: { width: "100%" }
-                    },
-                    [
-                      _c("option", { attrs: { selected: "selected" } }, [
-                        _vm._v("All")
-                      ]),
-                      _vm._v(" "),
-                      _c("option", [_vm._v("All")]),
-                      _vm._v(" "),
-                      _c("option", [_vm._v("NMB Head Quarter")]),
-                      _vm._v(" "),
-                      _c("option", [_vm._v("NHC Iconic")]),
-                      _vm._v(" "),
-                      _c("option", [_vm._v("Viva Tower")])
-                    ]
-                  )
-                ])
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "modal-footer justify-content-between" }, [
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-outline-light",
-                  attrs: { type: "button", "data-dismiss": "modal" }
-                },
-                [_vm._v("Close")]
-              ),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-outline-light",
-                  attrs: { type: "button" }
-                },
-                [_vm._v("Set")]
-              )
-            ])
-          ])
-        ])
-      ]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
     return _c("div", { staticClass: "modal-header" }, [
-      _c("h4", { staticClass: "modal-title" }, [_vm._v("Filter User")]),
+      _c("h4", { staticClass: "modal-title" }, [_vm._v("Filter Date Range")]),
       _vm._v(" "),
       _c(
         "button",
@@ -834,28 +873,61 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "modal-body" }, [
       _c("div", { staticClass: "col-12" }, [
-        _c("div", { staticClass: "form-group" }, [
-          _c(
-            "select",
-            {
-              staticClass: "form-control select2",
-              staticStyle: { width: "100%" },
-              attrs: { id: "filter_user" }
-            },
-            [
-              _c("option", { attrs: { selected: "selected" } }, [
-                _vm._v("All")
-              ]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Mr. Qiu")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Mr. Yang")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Mr. Zhuang")])
-            ]
-          )
+        _c("div", { staticClass: "input-group" }, [
+          _c("div", { staticClass: "input-group-prepend" }, [
+            _c("span", { staticClass: "input-group-text" }, [
+              _c("i", { staticClass: "far fa-calendar-alt" })
+            ])
+          ]),
+          _vm._v(" "),
+          _c("input", {
+            staticClass: "form-control float-right",
+            attrs: { type: "text", id: "filter_date_range" }
+          })
         ])
       ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c("h4", { staticClass: "modal-title" }, [_vm._v("Filter Project Site")]),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c("h4", { staticClass: "modal-title" }, [_vm._v("Filter User")]),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
     ])
   },
   function() {

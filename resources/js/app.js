@@ -55,6 +55,25 @@ window.toast = Swal.mixin({
     timer: 3000
 });
 
+/***********************************************************
+ * Set Vue Filters Here..
+ */
+// this format the Date
+import moment from 'moment'
+Vue.filter('formatDate', function(value,formatType) {
+        formatType = (formatType == null ? 'MMM DD, YYYY' : formatType);
+        return moment(String(value)).format(formatType);
+})
+
+/***********************************************************
+ * Other userfull JS Initialization
+ */
+// Add prototype for Date format to add days
+Date.prototype.addDays = function(days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+}
 
 /*****************************
  * Initialize new Vue instance

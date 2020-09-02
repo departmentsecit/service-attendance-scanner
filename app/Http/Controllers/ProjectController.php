@@ -16,14 +16,16 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
+        $project = Project::where('status','<>','Deleted');
+
         if ($request['paginate']) {
             try {
-                return ProjectResource::collection(Project::paginate($request['paginate']));
+                return ProjectResource::collection($project->paginate($request['paginate']));
             } catch (\Throwable $e) {
                 return response(['error'=> true, 'message'=>'An error occured. Please make sure you send an integer value for paginate.']);
             }
         }else{
-            return ProjectResource::collection(Project::all());
+            return ProjectResource::collection($project->get());
         }
     }
 
@@ -87,5 +89,16 @@ class ProjectController extends Controller
         }
 
        
+    }
+
+    /**
+     * Changes the status to deleted
+     */
+    public function destroy(Project $project)
+    {
+        // $person->delete();
+        $project->status = 'Deleted';
+        $project->save();
+        return response()->json();
     }
 }

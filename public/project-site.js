@@ -1247,6 +1247,35 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       } else {
         Swal.fire('Error!', 'Please select at least 1 floor.', 'error');
       }
+    },
+    deleteProject: function deleteProject(id) {
+      var _this7 = this;
+
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then(function (result) {
+        if (result.value) {
+          axios["delete"]('/project/' + id).then(function (res) {
+            _this7.getProjects();
+
+            toast.fire({
+              icon: 'success',
+              title: 'Project has bee deleted'
+            });
+          })["catch"](function (error) {
+            if (error.response.status == 401) {
+              alert('User session has expired. Please login again.');
+              location.replace("/login");
+            }
+          });
+        }
+      });
     }
   }
 });
@@ -3909,7 +3938,21 @@ var render = function() {
                         _vm._v(" "),
                         _vm._m(5, true),
                         _vm._v(" "),
-                        _vm._m(6, true)
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-danger btn-sm",
+                            on: {
+                              click: function($event) {
+                                return _vm.deleteProject(project.id)
+                              }
+                            }
+                          },
+                          [
+                            _c("i", { staticClass: "fas fa-trash" }),
+                            _vm._v(" Delete")
+                          ]
+                        )
                       ])
                     ])
                   }),
@@ -3928,7 +3971,7 @@ var render = function() {
       [
         _c("div", { staticClass: "modal-dialog" }, [
           _c("div", { staticClass: "modal-content bg-secondary" }, [
-            _vm._m(7),
+            _vm._m(6),
             _vm._v(" "),
             _c("div", { staticClass: "modal-body" }, [
               _c("div", { staticClass: "col-12" }, [
@@ -4288,15 +4331,6 @@ var staticRenderFns = [
     return _c("button", { staticClass: "btn btn-warning btn-sm" }, [
       _c("i", { staticClass: "fas fa-pen" }),
       _vm._v(" Edit")
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("button", { staticClass: "btn btn-danger btn-sm" }, [
-      _c("i", { staticClass: "fas fa-trash" }),
-      _vm._v(" Delete")
     ])
   },
   function() {

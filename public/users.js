@@ -288,13 +288,30 @@ __webpack_require__.r(__webpack_exports__);
     deleteUser: function deleteUser(uid) {
       var _this5 = this;
 
-      axios["delete"]('/user/' + uid).then(function (res) {
-        _this5.fetchUser();
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then(function (result) {
+        if (result.value) {
+          axios["delete"]('/user/' + uid).then(function (res) {
+            _this5.fetchUser();
 
-        toast.fire({
-          icon: 'success',
-          title: 'User has bee deleted'
-        });
+            toast.fire({
+              icon: 'success',
+              title: 'User has bee deleted'
+            });
+          })["catch"](function (error) {
+            if (error.response.status == 401) {
+              alert('User session has expired. Please login again.');
+              location.replace("/login");
+            }
+          });
+        }
       });
     }
   }
