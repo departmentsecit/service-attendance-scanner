@@ -45,8 +45,6 @@ class LoginController extends Controller
     {
         return 'username';
     }
-<<<<<<< HEAD
-=======
 
     /**
      * Override the default function for checking the credentials
@@ -56,5 +54,4 @@ class LoginController extends Controller
    
         return array_merge($request->only($this->username(), 'password'), ['status' => 'Active']);
     }
->>>>>>> c35af27bf97fe60b62b041d006c140982546dc96
 }
