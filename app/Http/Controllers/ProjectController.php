@@ -30,6 +30,14 @@ class ProjectController extends Controller
     }
 
     /**
+     * Show Project info
+     */
+    public function show(Project $project)
+    {
+        return $project;
+    }
+
+    /**
      * Save new project
      */
     public function store(Request $request)
@@ -89,6 +97,34 @@ class ProjectController extends Controller
         }
 
        
+    }
+
+    /**
+     * Update project information
+     */
+    public function update(Request $request,Project $project)
+    {
+        $request->validate([
+            'id'        => ['required','integer'],
+            'name'      => ['required','string'],
+            'country'   => ['required','integer'],
+            'city'      => ['required','integer'],
+            'status'    => ['required','string']
+        ]);
+
+        $project->country_id        = $request['country'];
+        $project->city_id           = $request['city'];
+        $project->name              = $request['name'];
+        $project->address           = $request['address'];
+        $project->contact_person    = $request['contact_person'];
+        $project->contact_number    = $request['contact_number'];
+        $project->description       = $request['description'];
+        $project->status            = $request['status'];
+        $project->supervisor        = $request['supervisor'];
+
+        $project->save();
+
+        return response(['error'=>false,'message'=>'successfully updated.']);
     }
 
     /**

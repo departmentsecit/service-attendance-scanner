@@ -2,8 +2,9 @@ const Dashboard = () => import(/* webpackChunkName: "dashboard" */ './components
 const Users = () => import(/* webpackChunkName: "users" */ './components/Users.vue');
 const Scans = () => import(/* webpackChunkName: "scans" */ './components/Scans.vue');
 const ProjectSites = () => import(/* webpackChunkName: "project-site" */ './components/projects/ProjectSites.vue');
-const ProjectAdd = () => import(/* webpackChunkName: "project-site" */ './components/projects/ProjectAdd.vue');
-const FloorNames = () => import(/* webpackChunkName: "project-site" */ './components/FloorNames.vue');
+const ProjectAdd = () => import(/* webpackChunkName: "project-add" */ './components/projects/ProjectAdd.vue');
+const ProjectViewEdit = () => import(/* webpackChunkName: "project-view-edit" */ './components/projects/ProjectViewEdit.vue');
+const FloorNames = () => import(/* webpackChunkName: "floor-names" */ './components/FloorNames.vue');
 
 
 export const routes = [
@@ -30,6 +31,14 @@ export const routes = [
     {
         path: '/floor-names',
         component: FloorNames
+    },
+    {
+        path: '/project-site/info',
+        component: ProjectViewEdit,
+        props:(route)=>({
+            t:  route.query.t,
+            pId:  route.query.pId, // project id
+        })
     },
 ];
 

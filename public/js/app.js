@@ -43,7 +43,7 @@
 /******/
 /******/ 	// script path function
 /******/ 	function jsonpScriptSrc(chunkId) {
-/******/ 		return __webpack_require__.p + "" + ({"dashboard":"dashboard","users":"users","vendors~project-site~scans":"vendors~project-site~scans","scans":"scans","vendors~project-site":"vendors~project-site","project-site":"project-site"}[chunkId]||chunkId) + ".js"
+/******/ 		return __webpack_require__.p + "" + ({"dashboard":"dashboard","project-add":"project-add","users":"users","vendors~floor-names":"vendors~floor-names","floor-names":"floor-names","vendors~project-site~project-view-edit~scans":"vendors~project-site~project-view-edit~scans","project-site":"project-site","project-view-edit":"project-view-edit","scans":"scans"}[chunkId]||chunkId) + ".js"
 /******/ 	}
 /******/
 /******/ 	// The require function
@@ -96818,19 +96818,23 @@ var Users = function Users() {
 };
 
 var Scans = function Scans() {
-  return Promise.all(/*! import() | scans */[__webpack_require__.e("vendors~project-site~scans"), __webpack_require__.e("scans")]).then(__webpack_require__.bind(null, /*! ./components/Scans.vue */ "./resources/js/components/Scans.vue"));
+  return Promise.all(/*! import() | scans */[__webpack_require__.e("vendors~project-site~project-view-edit~scans"), __webpack_require__.e("scans")]).then(__webpack_require__.bind(null, /*! ./components/Scans.vue */ "./resources/js/components/Scans.vue"));
 };
 
 var ProjectSites = function ProjectSites() {
-  return Promise.all(/*! import() | project-site */[__webpack_require__.e("vendors~project-site~scans"), __webpack_require__.e("vendors~project-site"), __webpack_require__.e("project-site")]).then(__webpack_require__.bind(null, /*! ./components/projects/ProjectSites.vue */ "./resources/js/components/projects/ProjectSites.vue"));
+  return Promise.all(/*! import() | project-site */[__webpack_require__.e("vendors~project-site~project-view-edit~scans"), __webpack_require__.e("project-site")]).then(__webpack_require__.bind(null, /*! ./components/projects/ProjectSites.vue */ "./resources/js/components/projects/ProjectSites.vue"));
 };
 
 var ProjectAdd = function ProjectAdd() {
-  return Promise.all(/*! import() | project-site */[__webpack_require__.e("vendors~project-site~scans"), __webpack_require__.e("vendors~project-site"), __webpack_require__.e("project-site")]).then(__webpack_require__.bind(null, /*! ./components/projects/ProjectAdd.vue */ "./resources/js/components/projects/ProjectAdd.vue"));
+  return __webpack_require__.e(/*! import() | project-add */ "project-add").then(__webpack_require__.bind(null, /*! ./components/projects/ProjectAdd.vue */ "./resources/js/components/projects/ProjectAdd.vue"));
+};
+
+var ProjectViewEdit = function ProjectViewEdit() {
+  return Promise.all(/*! import() | project-view-edit */[__webpack_require__.e("vendors~project-site~project-view-edit~scans"), __webpack_require__.e("project-view-edit")]).then(__webpack_require__.bind(null, /*! ./components/projects/ProjectViewEdit.vue */ "./resources/js/components/projects/ProjectViewEdit.vue"));
 };
 
 var FloorNames = function FloorNames() {
-  return Promise.all(/*! import() | project-site */[__webpack_require__.e("vendors~project-site~scans"), __webpack_require__.e("vendors~project-site"), __webpack_require__.e("project-site")]).then(__webpack_require__.bind(null, /*! ./components/FloorNames.vue */ "./resources/js/components/FloorNames.vue"));
+  return Promise.all(/*! import() | floor-names */[__webpack_require__.e("vendors~floor-names"), __webpack_require__.e("floor-names")]).then(__webpack_require__.bind(null, /*! ./components/FloorNames.vue */ "./resources/js/components/FloorNames.vue"));
 };
 
 var routes = [{
@@ -96851,6 +96855,16 @@ var routes = [{
 }, {
   path: '/floor-names',
   component: FloorNames
+}, {
+  path: '/project-site/info',
+  component: ProjectViewEdit,
+  props: function props(route) {
+    return {
+      t: route.query.t,
+      pId: route.query.pId // project id
+
+    };
+  }
 }];
 
 /***/ }),

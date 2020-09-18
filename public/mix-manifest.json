@@ -3,9 +3,12 @@
     "/css/app.css": "/css/app.css",
     "/css/print.css": "/css/print.css",
     "/dashboard.js": "/dashboard.js",
+    "/floor-names.js": "/floor-names.js",
+    "/project-add.js": "/project-add.js",
     "/project-site.js": "/project-site.js",
+    "/project-view-edit.js": "/project-view-edit.js",
     "/scans.js": "/scans.js",
     "/users.js": "/users.js",
-    "/vendors~project-site~scans.js": "/vendors~project-site~scans.js",
-    "/vendors~project-site.js": "/vendors~project-site.js"
+    "/vendors~project-site~project-view-edit~scans.js": "/vendors~project-site~project-view-edit~scans.js",
+    "/vendors~floor-names.js": "/vendors~floor-names.js"
 }
