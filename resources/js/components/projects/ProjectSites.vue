@@ -73,8 +73,7 @@
                                     <td class="text-center">{{ project.lifts.length }}</td>
                                     <td class="text-center">
                                       <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#generate-qr-modal" @click="getBuildings(project.id)"> <i class="fas fa-qrcode"></i> Code</button>
-                                      <button class="btn btn-info btn-sm"> <i class="fas fa-eye"></i> View</button>
-                                      <button class="btn btn-warning btn-sm"> <i class="fas fa-pen"></i> Edit</button>
+                                      <router-link class="btn btn-info btn-sm" :to="{path: '/project-site/info', query: {t: 'view', pId: project.id}}"> <i class="fas fa-eye mr-1"></i>View</router-link>
                                       <button class="btn btn-danger btn-sm" @click="deleteProject(project.id)"> <i class="fas fa-trash"></i> Delete</button>
                                     </td>
                                 </tr>
@@ -92,7 +91,7 @@
 
         </section>
 
-        <!-- // Filter Date Range Modal // -->
+        <!-- // Generate QR Code Modal // -->
         <div class="modal fade" id="generate-qr-modal">
             <div class="modal-dialog">
                 <div class="modal-content bg-secondary">
@@ -159,7 +158,8 @@
             </div>
             <!-- /.modal-dialog -->
         </div>
-        <!-- /.modal -->
+        <!-- /.Generate QR Code Modal -->
+
 
     </div>
 </template>

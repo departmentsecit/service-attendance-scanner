@@ -4,12 +4,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                   <div class="col-sm-6">
-                      <!--  -->
+                      <h1>{{projectForm.name}}</h1>
                   </div>
                   <div class="col-sm-6">
                       <ol class="breadcrumb float-sm-right">
                       <li class="breadcrumb-item"><a href="#">Project Sites</a></li>
-                      <li class="breadcrumb-item active">Add</li>
+                      <li class="breadcrumb-item active">{{t}}</li>
                       </ol>
                   </div>
                 </div>
@@ -24,14 +24,14 @@
                     <div class="card-header p-0 pt-1">
 
                         <ul class="nav nav-tabs" id="custom-tabs-two-tab" role="tablist">
-                            <li class="pt-2 px-3"><h3 class="card-title text-bold">Add New Project</h3></li>
+                            <li class="pt-2 px-3"></li>
                             <li class="nav-item">
-                                <a class="nav-link" :class="saved?'':'active'" id="project-details-tab" data-toggle="pill" href="#project-details" role="tab" aria-controls="project-details" aria-selected="true">
+                                <a class="nav-link active" id="project-details-tab" data-toggle="pill" href="#project-details" role="tab" aria-controls="project-details" aria-selected="true">
                                     Project Details
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" :class="saved?'active':'disabled'"  id="lifts-details-tab" data-toggle="pill" href="#lifts-details" role="tab" aria-controls="lifts-details" aria-selected="false">
+                                <a class="nav-link" id="lifts-details-tab" data-toggle="pill" href="#lifts-details" role="tab" aria-controls="lifts-details" aria-selected="false">
                                     Lifts Details
                                 </a>
                             </li>
@@ -43,15 +43,15 @@
                         <div class="tab-content" id="custom-tabs-two-tabContent">
 
                             <!-- first tab -->
-                            <div class="tab-pane fade" :class="saved?'':'show active'" id="project-details" role="tabpanel" aria-labelledby="project-details-tab">
-                                <alert-errors :form="newProjectForm" message="There were some problems with your input."></alert-errors>
+                            <div class="tab-pane fade active show" id="project-details" role="tabpanel" aria-labelledby="project-details-tab">
+                                <alert-errors :form="projectForm" message="There were some problems with your input."></alert-errors>
                                 <div class="card-body">
                                     <!-- name -->
                                     <div class="form-group row">
                                         <label for="projectName" class="col-sm-2 col-form-label text-sm-right"> <span class="text-danger">*</span>Name:</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" :class="{'is-invalid': newProjectForm.errors.has('name')}" id="projectName" placeholder="Enter project name" v-model="newProjectForm.name">
-                                            <has-error :form="newProjectForm" field="name"></has-error>
+                                            <input type="text" class="form-control" :class="{'is-invalid': projectForm.errors.has('name')}" id="projectName" placeholder="Enter project name" v-model="projectForm.name">
+                                            <has-error :form="projectForm" field="name"></has-error>
                                         </div>
                                     </div>
                                     <!-- country -->
@@ -60,11 +60,11 @@
                                         <div class="col-sm-10">
                                             <div class="row">
                                                 <div class="col-11">
-                                                    <select class="form-control" :class="{'text-placeholder': newProjectForm.country=='','is-invalid':newProjectForm.errors.has('country')}" id="projectCountry" v-model="newProjectForm.country">
+                                                    <select class="form-control" :class="{'text-placeholder': projectForm.country=='','is-invalid':projectForm.errors.has('country')}" id="projectCountry" v-model="projectForm.country">
                                                         <option value="" selected disabled>Select country</option>
                                                         <option class="text-black" v-for="(country,i) in countries" :key="i" :value="country.id">{{country.name}}</option>
                                                     </select>
-                                                    <has-error :form="newProjectForm" field="country"></has-error>
+                                                    <has-error :form="projectForm" field="country"></has-error>
                                                 </div>
                                                 <div class="col-1">
                                                     <i class="fas fa-plus clickable text-primary mt-2" data-toggle="modal" data-target="#modal-add-country"></i>
@@ -78,14 +78,14 @@
                                         <div class="col-sm-10">
                                             <div class="row">
                                                 <div class="col-11">
-                                                    <select class="form-control" :class="{'text-placeholder': newProjectForm.city=='','is-invalid':newProjectForm.errors.has('city')}" id="projectCity" v-model="newProjectForm.city">
+                                                    <select class="form-control" :class="{'text-placeholder': projectForm.city=='','is-invalid':projectForm.errors.has('city')}" id="projectCity" v-model="projectForm.city">
                                                         <option value="" selected disabled>Select city</option>
                                                         <option class="text-black" v-for="(city,i) in cities" :key="i" :value="city.id">{{city.name}}</option>
                                                     </select>
-                                                    <has-error :form="newProjectForm" field="city"></has-error>
+                                                    <has-error :form="projectForm" field="city"></has-error>
                                                 </div>
                                                 <div class="col-1">
-                                                    <i class="fas fa-plus clickable text-primary mt-2" data-toggle="modal" data-target="#modal-add-city" @click="newCityForm.country_id=newProjectForm.country"></i>
+                                                    <i class="fas fa-plus clickable text-primary mt-2" data-toggle="modal" data-target="#modal-add-city" @click="newCityForm.country_id=projectForm.country"></i>
                                                 </div>
                                             </div>
 
@@ -96,50 +96,57 @@
                                     <div class="form-group row">
                                         <label for="projectAddress" class="col-sm-2 col-form-label text-sm-right">Address:</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="projectAddress" placeholder="Enter project address" v-model="newProjectForm.address">
+                                            <input type="text" class="form-control" id="projectAddress" placeholder="Enter project address" v-model="projectForm.address">
                                         </div>
                                     </div>
                                     <!-- contact person -->
                                     <div class="form-group row">
                                         <label for="projectContactPerson" class="col-sm-2 col-form-label text-sm-right">Contact Person:</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="projectContactPerson" placeholder="Enter project contact person" v-model="newProjectForm.contact_person">
+                                            <input type="text" class="form-control" id="projectContactPerson" placeholder="Enter project contact person" v-model="projectForm.contact_person">
                                         </div>
                                     </div>
                                     <!-- contact number -->
                                     <div class="form-group row">
                                         <label for="projectContactNumber" class="col-sm-2 col-form-label text-sm-right">Contact Number:</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="projectContactNumber" placeholder="Enter project contact number" v-model="newProjectForm.contact_number">
+                                            <input type="text" class="form-control" id="projectContactNumber" placeholder="Enter project contact number" v-model="projectForm.contact_number">
                                         </div>
                                     </div>
                                     <!-- project description -->
                                     <div class="form-group row">
                                         <label for="projectDescription" class="col-sm-2 col-form-label text-sm-right">Project Description:</label>
                                         <div class="col-sm-10">
-                                            <textarea class="form-control" id="projectDescription" rows="5" placeholder="Enter project description" v-model="newProjectForm.description"></textarea>
+                                            <textarea class="form-control" id="projectDescription" rows="5" placeholder="Enter project description" v-model="projectForm.description"></textarea>
                                         </div>
                                     </div>
                                     <!-- status -->
                                     <div class="form-group row">
                                         <label for="projectStatus" class="col-sm-2 col-form-label text-sm-right"> <span class="text-danger">*</span>Status:</label>
                                         <div class="col-sm-10">
-                                            <select class="form-control" :class="{'text-placeholder': newProjectForm.status=='','is-invalid':newProjectForm.errors.has('status')}"   id="projectStatus" v-model="newProjectForm.status">
+                                            <select class="form-control" :class="{'text-placeholder': projectForm.status=='','is-invalid':projectForm.errors.has('status')}"   id="projectStatus" v-model="projectForm.status">
                                                 <option selected="" disabled="" value="">Select one</option>
                                                 <option class="text-black" value="Active">Active</option>
                                                 <option class="text-black" value="On-Hold">On-Hold</option>
                                                 <option class="text-black" value="Canceled">Canceled</option>
                                             </select>
-                                            <has-error :form="newProjectForm" field="status"></has-error>
+                                            <has-error :form="projectForm" field="status"></has-error>
                                         </div>
                                     </div>
                                     <!-- project supervisor -->
                                     <div class="form-group row">
                                         <label for="projectSupervisor" class="col-sm-2 col-form-label text-sm-right">Project Supervisor:</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="projectSupervisor" placeholder="Enter project supervisor" v-model="newProjectForm.supervisor">
+                                            <input type="text" class="form-control" id="projectSupervisor" placeholder="Enter project supervisor" v-model="projectForm.supervisor">
                                         </div>
                                     </div>
+
+                                    <div v-if="hasChanges" class="row mt-2 text-right">
+                                        <div class="col-sm-12">
+                                            <button type="submit" class="btn btn-info" @click="updateProject()">Save Changes</button>
+                                        </div>
+                                    </div>
+
 
                                     <hr class="mt-4 mb-4">
 
@@ -169,7 +176,7 @@
                                         <div class="col-sm-10 offset-sm-2">
 
                                             <div class="card">
-                                                <has-error :form="newProjectForm" field="buildings"></has-error>
+                                                <has-error :form="projectForm" field="buildings"></has-error>
                                                 <div class="card-body">
                                                     <table class="table table-bordered">
                                                         <thead>                  
@@ -180,11 +187,11 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr v-for="(building,i) in newProjectForm.buildings" :key="i">
+                                                            <tr v-for="(building,i) in buildings" :key="i">
                                                                 <td class="text-center">{{building.number}}</td>
                                                                 <td class="text-center">{{building.name}}</td>
                                                                 <td class="text-center">
-                                                                    <button class="btn btn-xs btn-danger" @click="removeBuilding(i)" :disabled="saved">
+                                                                    <button class="btn btn-xs btn-danger" @click="deleteBuilding(building.id, building.name)">
                                                                         <i class="fas fa-trash"></i>
                                                                     </button>
                                                                 </td>
@@ -202,7 +209,7 @@
                             </div><!-- /.first tab -->
                             
                             <!-- Second tab -->
-                            <div class="tab-pane fade" :class="saved?'show active':''" id="lifts-details" role="tabpanel" aria-labelledby="lifts-details-tab">
+                            <div class="tab-pane fade" id="lifts-details" role="tabpanel" aria-labelledby="lifts-details-tab">
                                 <div class="row">
                                     <!-- List of Lifts -->
                                     <div class="col-sm-6">
@@ -217,28 +224,28 @@
                                             <!-- /.card-header -->
                                             <div class="card-body p-0">
                                                 <table class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="text-center">Bldg #</th>
-                                                        <th class="text-center">Lift #</th>
-                                                        <th>Description</th>
-                                                        <th class="text-center">Floors Count</th>
-                                                        <th class="text-center">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr v-for="(lift,i) in lifts" :key="i">
-                                                        <td class="text-center">{{lift.building.number}}</td>
-                                                        <td class="text-center">{{lift.lift_num}}</td>
-                                                        <td>{{lift.description}}</td>
-                                                        <td class="text-center">{{lift.floor_count}}</td>
-                                                        <td class="text-center">
-                                                            <!-- <button class="btn btn-warning btn-sm mr-2"> <i class="fas fa-pen"></i> </button> -->
-                                                            <button class="btn btn-info btn-sm mr-2" @click="copyLift(lift)"> <i class="fas fa-copy"></i> </button>
-                                                            <button class="btn btn-danger btn-sm" @click="deleteLift(lift.id)"> <i class="fas fa-trash"></i> </button>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-center">Bldg #</th>
+                                                            <th class="text-center">Lift #</th>
+                                                            <th>Description</th>
+                                                            <th class="text-center">Floors Count</th>
+                                                            <th class="text-center">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="(lift,i) in lifts" :key="i">
+                                                            <td class="text-center">{{lift.building.number}}</td>
+                                                            <td class="text-center">{{lift.lift_num}}</td>
+                                                            <td>{{lift.description}}</td>
+                                                            <td class="text-center">{{lift.floor_count}}</td>
+                                                            <td class="text-center">
+                                                                <!-- <button class="btn btn-warning btn-sm mr-2"> <i class="fas fa-pen"></i> </button> -->
+                                                                <button class="btn btn-info btn-sm mr-2" @click="copyLift(lift)"> <i class="fas fa-copy"></i> </button>
+                                                                <button class="btn btn-danger btn-sm" @click="deleteLift(lift.id)"> <i class="fas fa-trash"></i> </button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
                                                 </table>
                                             </div> <!-- /.card-body -->
                                         </div> <!-- /.card -->
@@ -336,8 +343,7 @@
                     </div>
                     
                     <div class="card-footer">
-                        <button v-show="!saved" type="submit" class="btn btn-info float-right ml-2" @click="saveProject()">Save</button>
-                        <router-link to="/project-site" class="btn btn-default float-right">Cancel</router-link>
+                        <router-link to="/project-site" class="btn btn-default float-right">Return</router-link>
                     </div>
 
                 </div>
@@ -436,16 +442,16 @@
 
 <script>
 export default {
+    props:['t','pId'],
     data(){
         return{
-            projectId: null,
-            saved: false,
+            hasChanges: false,
             countries:[],
-            cities:[],
-            buildings:[],
             lifts: [],
             floorNames:[],
-            newProjectForm: new Form({
+            cities:[],
+            projectForm: new Form({
+                id: "",
                 name: "",
                 country: "",
                 city: "",
@@ -455,12 +461,13 @@ export default {
                 description: "",
                 status:"",
                 supervisor: "",
-                buildings: [],
             }),
-            newBuildingForm: {
+            buildings:[],
+            newBuildingForm: new Form({
+                project_id: "",
                 number: "",
                 name: ""
-            },
+            }),
             newLiftForm: new Form({
                 project_id: null,
                 building: "",
@@ -480,9 +487,12 @@ export default {
             })
         }
     },
-    mounted(){
+    async mounted(){
         // fetch data for dropdown list
         this.getCountries();
+        this.getProjectInfo();
+        this.getLifts();
+        this.getFloorNames();
 
         //Initialize Select2 Elements
         $('.select2').select2();
@@ -492,7 +502,7 @@ export default {
             this.newCountryForm.reset();
             this.newCountryForm.clear();
         });
-        // reset add city modal 
+        // reset add country modal 
         $('#modal-add-city').on('hidden.bs.modal', ()=>{
             this.newCityForm.reset();
             this.newCityForm.clear();
@@ -500,21 +510,104 @@ export default {
 
     },
     watch:{
-        'newProjectForm.country'(newVal){
+        'projectForm.country'(newVal){
             this.getCities(newVal);
+        },
+        projectForm:{
+            deep: true,
+            handler(){
+                this.hasChanges = true;
+            }
         }
     },
     methods:{
+        getCountries(){
+            axios.get('/countries')
+                .then((res)=>{
+                    this.countries = res.data;
+                });
+        },
+        async getProjectInfo(){
+            await axios.get('/project/'+this.pId)
+                .then((res)=>{
+                    this.projectForm.id = this.pId;
+                    this.projectForm.name = res.data.name;
+                    this.projectForm.country = res.data.country_id;
+                    this.projectForm.city = res.data.city_id;
+                    this.projectForm.address = res.data.address;
+                    this.projectForm.contact_person = res.data.contact_person;
+                    this.projectForm.contact_number = res.data.contact_number;
+                    this.projectForm.description = res.data.description;
+                    this.projectForm.status = res.data.status;
+                    this.projectForm.supervisor = res.data.supervisor;
+                    this.getBuildings();
+                });
+            this.hasChanges = false;
+        },
+        updateProject(){
+            this.projectForm.id = this.pId;
+
+            this.projectForm.put('/project/'+this.pId)
+                .then((res)=>{
+                    if (res.status == 200) {
+                        Swal.fire(
+                                'Updated!',
+                                'Project information has been updated successfully',
+                                'success'
+                            );
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            'Unable to update project information.',
+                            'error'
+                        );
+                    }
+
+                })
+                .catch((res)=>{
+                    Swal.fire(
+                        'Error!',
+                        'Unable to update project information.',
+                        'error'
+                    );
+                });
+        },
+        getBuildings(){
+            axios.get('/buildings/'+this.pId)
+                .then((res)=>{
+                    this.buildings = res.data;
+                });
+        },
         addBuilding(){
             // check if building number populated
             if (this.newBuildingForm.number && this.newBuildingForm.name) {
                 // check if building already added on the list
-                let result = this.newProjectForm.buildings.find(building => building.number === this.newBuildingForm.number);
+                let result = this.buildings.find(building => building.number === this.newBuildingForm.number);
                 
                 if (!result) {    
-                    this.newProjectForm.buildings.push(_.cloneDeep(this.newBuildingForm));
-                    this.newBuildingForm.number = "";
-                    this.newBuildingForm.name = "";
+
+                    // add building to the database
+                    this.newBuildingForm.project_id = this.pId;
+                    this.newBuildingForm.post('/building')
+                        .then((res)=>{
+                            this.newBuildingForm.number = "";
+                            this.newBuildingForm.name = "";
+                            this.getBuildings();
+                            Swal.fire(
+                                'Success!',
+                                'Building has been added successfully',
+                                'success'
+                            );
+                        })
+                        .catch((res)=>{
+                            Swal.fire(
+                                'Error!',
+                                'Unable to save building.',
+                                'error'
+                            );
+                        });
+
+                    
                 }else{
                     Swal.fire(
                         'Error!',
@@ -531,46 +624,44 @@ export default {
             }
 
         },
-        removeBuilding(index){
-            this.newProjectForm.buildings.splice(index,1);
+        deleteBuilding(buildingId, buildingName){
+
+            Swal.fire({
+            title: 'Delete Building!',
+            text: "Are you sure want to delete "+buildingName,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    axios.delete('/building/'+buildingId)
+                    .then((res)=>{
+                        if (res.status == 200) {
+                            this.getBuildings();
+                            this.getLifts();
+                            Swal.fire(
+                                'Deleted!',
+                                'Building has been deleted successfully',
+                                'success'
+                            );
+                        }else{
+                            Swal.fire(
+                                    'Error!',
+                                    'Unable to delete building.',
+                                    'error'
+                                );
+                        }
+                    });
+                }
+            })
         },
-        saveProject(){
-            this.newProjectForm.post('/project')
+        getLifts(){
+            axios.get('/lifts/'+this.pId)
                 .then((res)=>{
-                    if (res.status == 200) {
-                        
-                        this.projectId = res.data.project.id;
-                        
-                        this.getFloorNames();
-                        this.getBuildings();
-
-                        this.saved = true;
-
-                        toast.fire({
-                            icon: 'success',
-                            title: 'Project has been saved.'
-                        });
-                    } else {
-                        Swal.fire(
-                            'Error!',
-                            'Unable to save project.',
-                            'error'
-                        );
-                    }
-
-                })
-                .catch((res)=>{
-                    Swal.fire(
-                        'Error!',
-                        'Unable to save project.',
-                        'error'
-                    );
-                });
-        },
-        getCountries(){
-            axios.get('/countries')
-                .then((res)=>{
-                    this.countries = res.data;
+                    this.lifts = res.data.data;
                 });
         },
         addCountry(){
@@ -604,7 +695,7 @@ export default {
             this.newCityForm.post('/city')
                 .then((res)=>{
                     if (res.status == 201) {
-                        this.getCities(this.newProjectForm.country);
+                        this.getCities(this.projectForm.country);
                         $('#modal-add-city').modal('hide');
                         Swal.fire(
                             'Success!',
@@ -626,18 +717,6 @@ export default {
                     this.floorNames = res.data;
                 });
         },
-        getLifts(){
-            axios.get('/lifts/'+this.projectId)
-                .then((res)=>{
-                    this.lifts = res.data.data;
-                });
-        },
-        getBuildings(){
-            axios.get('/buildings/'+this.projectId)
-                .then((res)=>{
-                    this.buildings = res.data;
-                });
-        },
         addLift(){
 
             // get all floors and push to array
@@ -653,7 +732,7 @@ export default {
             }
 
             if (this.newLiftForm.floors.length > 0) {
-                this.newLiftForm.project_id = this.projectId;
+                this.newLiftForm.project_id = this.pId;
                 this.newLiftForm.post('/lift')
                     .then((res)=>{
                         if (res.status == 200) {
@@ -690,8 +769,6 @@ export default {
                 );
             }
 
-
-           
         },
         cancelAddLift(){
             this.newLiftForm.clear();
@@ -729,7 +806,7 @@ export default {
                                 title: 'Unable to delete lift.'
                             });
                     }
-                })
+                });
         }
     }
 }
